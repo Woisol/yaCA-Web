@@ -7,6 +7,7 @@ import {
   type YacaSxmlEvent
 } from '@yaca/agent-core';
 import type { AgentEvent } from '@yaca/types';
+import type { ChatMessage as StoredChatMessage } from '@yaca/types';
 import {
   appendAssistantDelta,
   appendChatLine,
@@ -25,6 +26,7 @@ export async function runWebAgentTurn(
   runtime: YacaWebRuntime,
   options: {
     sessionId?: string;
+    content?: StoredChatMessage['content'];
     signal?: AbortSignal;
     onMessages(messages: ChatMessage[], sessionId: string): void;
     onEvent(event: AgentEvent): void;
@@ -39,7 +41,7 @@ export async function runWebAgentTurn(
   }
 
   const sessionId = runtime.state.sessionId;
-  const content = await parseUserInput(text, runtime.cwd);
+  const content = options.content ?? await parseUserInput(text, runtime.cwd);
   await runtime.store.appendMessage(sessionId, { role: 'user', content });
 
   let messages = appendChatLine(

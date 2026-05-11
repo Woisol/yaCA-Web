@@ -14,6 +14,55 @@
   gap: 10px;
 }
 
+.composer-drop-preview {
+  grid-column: 1 / -1;
+  min-height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--panel-strong);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.composer-drop-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-strong);
+}
+
+.composer-drop-text {
+  min-width: 0;
+  color: var(--text);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.composer-drop-clear {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.composer-drop-clear:hover {
+  color: var(--text);
+  border-color: var(--text-dim);
+}
+
 .composer-input {
   width: 100%;
   min-height: 2.5rem;
@@ -68,10 +117,10 @@
   .composer {
     margin: 0 10px 8px;
     padding: 8px;
-      gap: 8px;
-    }
+    gap: 8px;
+  }
 
-    .composer-command {
-      min-width: 74px;
+  .composer-command {
+    min-width: 74px;
   }
 }

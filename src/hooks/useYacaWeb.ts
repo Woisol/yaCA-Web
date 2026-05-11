@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AppendMessage, ExternalStoreAdapter, ThreadMessage } from '@assistant-ui/react';
 import type { ChatMessage, SessionMeta, ToolCall, YacaConfig, RuntimeInfo, ToolDefinitionView, ServerWsMessage } from '../api/types.js';
+import type { MessagePart } from '@yaca/types';
 import { rest } from '../api/rest-client.js';
 import { createWsClient, type WsClient } from '../api/ws-client.js';
 import { appendMessageText, toThreadMessages } from '../lib/assistant.js';
@@ -54,8 +55,14 @@ export function useYacaWeb() {
   useEffect(() => {
     const client = createWsClient({
       onOpen: () => setConnected(true),
-      onClose: () => setConnected(false),
-      onError: () => setConnected(false),
+      onClose: () => {
+        setConnected(false);
+        setBusy(false);
+      },
+      onError: () => {
+        setConnected(false);
+        setBusy(false);
+      },
       onMessage: handleWsMessage
     });
     wsRef.current = client;
@@ -67,32 +74,46 @@ export function useYacaWeb() {
 
   const threadMessages = useMemo(() => toThreadMessages(messages), [messages]);
 
-  const sendText = useCallback(async (text: string) => {
+  const sendUserMessage = useCallback(async (text: string, content?: string | MessagePart[]) => {
     const trimmed = text.trim();
     if (!trimmed) return;
+    setBusy(true);
     let nextSessionId = sessionId;
     if (!nextSessionId) {
-      const created = await rest.createSession({ name: trimmed.slice(0, 80) });
-      nextSessionId = created.session.id;
-      setSessionId(nextSessionId);
-      setSessions((current) => [created.session, ...current]);
+      try {
+        const created = await rest.createSession({ name: trimmed.slice(0, 80) });
+        nextSessionId = created.session.id;
+        setSessionId(nextSessionId);
+        setSessions((current) => [created.session, ...current]);
+      } catch (cause) {
+        setBusy(false);
+        setError(formatError(cause));
+        return;
+      }
     }
-    setBusy(true);
     setMessages((current) => [...current, { kind: 'user', text: trimmed }]);
-    wsRef.current?.send({ type: 'chat.send', id: crypto.randomUUID(), sessionId: nextSessionId, text: trimmed });
+    wsRef.current?.send({ type: 'chat.send', id: crypto.randomUUID(), sessionId: nextSessionId, text: trimmed, content });
   }, [sessionId]);
+
+  const sendText = useCallback(async (text: string) => {
+    await sendUserMessage(text);
+  }, [sendUserMessage]);
+
+  const sendContent = useCallback(async (text: string, content: string | MessagePart[]) => {
+    await sendUserMessage(text, content);
+  }, [sendUserMessage]);
 
   const assistantStore = useMemo<ExternalStoreAdapter<ThreadMessage>>(() => ({
     messages: threadMessages,
     isRunning: busy,
     onNew: async (message: AppendMessage) => {
-      await sendText(appendMessageText(message));
+      await sendUserMessage(appendMessageText(message));
     },
     onCancel: async () => {
       wsRef.current?.send({ type: 'chat.abort', id: crypto.randomUUID(), sessionId });
       setBusy(false);
     }
-  }), [busy, sendText, sessionId, threadMessages]);
+  }), [busy, sendUserMessage, sessionId, threadMessages]);
 
   const createSession = useCallback(async () => {
     const created = await rest.createSession({ name: 'New session' });
@@ -136,6 +157,11 @@ export function useYacaWeb() {
       setMessages((current) => [...current, { kind: message.kind, text: message.text }]);
       return;
     }
+    if (message.type === 'chat.done') {
+      if (message.sessionId) setSessionId(message.sessionId);
+      setBusy(false);
+      return;
+    }
     if (message.type === 'tool.confirm_request') {
       setPendingToolConfirm({ id: message.id, callId: message.callId, call: message.call, kind: message.kind });
       return;
@@ -161,13 +187,6 @@ export function useYacaWeb() {
     }
   }
 
-  useEffect(() => {
-    const last = messages.at(-1);
-    if (last?.kind === 'assistant' || last?.kind === 'tool' && last.status !== 'running' || last?.kind === 'error') {
-      setBusy(false);
-    }
-  }, [messages]);
-
   return {
     assistantStore,
     sessions,
@@ -185,6 +204,7 @@ export function useYacaWeb() {
     createSession,
     selectSession,
     sendText,
+    sendContent,
     updateTrustMode,
     updateAllow,
     resolveToolConfirm

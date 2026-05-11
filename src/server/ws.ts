@@ -80,6 +80,7 @@ async function handleWsMessage(
   if (message.type === 'chat.abort') {
     state.getController()?.abort();
     hub.send(ws, { type: 'chat.line', id: message.id, kind: 'status', text: 'Turn aborted.' });
+    hub.send(ws, { type: 'chat.done', id: message.id, sessionId: message.sessionId });
     return;
   }
   if (message.type === 'session.resume') {
@@ -113,12 +114,14 @@ async function runChatSend(
   try {
     const result = await runWebAgentTurn(message.text, runtime, {
       sessionId: message.sessionId,
+      content: message.content,
       signal: controller.signal,
       onMessages: (messages, sessionId) => hub.send(ws, { type: 'chat.messages', id: message.id, sessionId, messages }),
       onEvent: (event) => hub.send(ws, { type: 'agent.event', id: message.id, event })
     });
     hub.broadcast({ type: 'session.list', id: 'sessions', sessions: await runtime.store.listSessions() });
     hub.send(ws, { type: 'chat.messages', id: message.id, sessionId: result.sessionId, messages: result.messages });
+    hub.send(ws, { type: 'chat.done', id: message.id, sessionId: result.sessionId });
   } catch (error) {
     hub.send(ws, { type: 'error', id: message.id, error: toApiError(error) });
   } finally {

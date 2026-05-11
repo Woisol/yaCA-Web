@@ -2,6 +2,7 @@ import type { YacaConfig } from '@yaca/agent-core/storage/config-store.js';
 import type { SessionMeta } from '@yaca/agent-core/storage/session-store.js';
 import type { AgentEvent, ToolCall } from '@yaca/types';
 import type { ChatMessage } from '@yaca/ui/chat/types.js';
+import type { MessagePart } from '@yaca/types';
 
 export type { AgentEvent, ChatMessage, ToolCall };
 export type { SessionMeta, YacaConfig };
@@ -85,13 +86,14 @@ export type UpdateAllowToolsRequest = {
 };
 
 export type ClientWsMessage =
-  | { type: 'chat.send'; id: string; sessionId?: string; text: string }
+  | { type: 'chat.send'; id: string; sessionId?: string; text: string; content?: string | MessagePart[] }
   | { type: 'chat.abort'; id: string; sessionId?: string }
   | { type: 'session.resume'; id: string; sessionId: string }
   | { type: 'tool.confirm'; id: string; callId: string; approved: boolean };
 
 export type ServerWsMessage =
   | { type: 'chat.messages'; id: string; sessionId?: string; messages: ChatMessage[] }
+  | { type: 'chat.done'; id: string; sessionId?: string }
   | { type: 'chat.line'; id: string; kind: ChatMessage['kind']; text: string }
   | { type: 'agent.event'; id: string; event: AgentEvent }
   | { type: 'tool.confirm_request'; id: string; callId: string; call: ToolCall; kind: 'tool' | 'command' }
