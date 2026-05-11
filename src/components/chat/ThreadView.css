@@ -1,12 +1,15 @@
 .thread-root,
 .thread-viewport {
   min-height: 0;
+  padding: 10px 0;
   flex: 1;
+  overflow-y: auto;
 }
 
+/* 撑开容器的原因：svh 是相对视口高度，不是固定高度，百分比失效…… */
 .thread-viewport {
-  height: 100%;
-  overflow: auto;
+  /* height: 100%; */
+    flex: 1;
   padding: 22px min(5vw, 56px);
 }
 
