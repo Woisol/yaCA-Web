@@ -16,6 +16,11 @@
   border-bottom: 1px solid var(--border);
 }
 
+.sidebar-action {
+  display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
 .brand {
   font-weight: 800;
   letter-spacing: 0;
@@ -67,30 +72,47 @@
 
 .session-item.active {
   border-color: var(--accent-strong);
-  background: rgba(20, 184, 166, 0.14);
+  background: color-mix(in srgb, var(--accent-strong) 18%, transparent);
 }
 
 .empty-sidebar {
   padding: 12px;
 }
 
+.theme-toggle {
+  position: relative;
+}
+
+/* woc 6，我写的动态 svg 被抽象成这样了😂效果居然也还可以😂😂😂 */
+.theme-toggle .theme-icon {
+  position: absolute;
+  inset: 7px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity .3s ease, transform .3s ease;
+}
+
+.theme-toggle .theme-icon.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
 .scrim {
   position: fixed;
   padding: 0;
   border: none;
   /* 修两个小细节😡 */
   z-index: 30;
-  background: rgba(0, 0, 0, .4);
+  background: var(--scrim);
   opacity: 0;
   backdrop-filter: blur(4px);
-  pointer-events: none;
+  /* pointer-events: none; */
   transition: opacity 0.3s ease;
 
   &.open {
     /* fixed + inset: 0 直接全屏✅😋 */
     inset: 0;
     opacity: 1;
-    pointer-events: all;
+    /* pointer-events: all; */
   }
 }
 
