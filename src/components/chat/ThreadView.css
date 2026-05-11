@@ -54,6 +54,85 @@
   border: 1px solid var(--border);
 }
 
+.markdown-bubble {
+  white-space: normal;
+
+  & li {
+    margin-left: 12px;
+  }
+}
+
+.message-md-heading {
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+
+.message-md-heading:not(:first-child) {
+  margin-top: 12px;
+}
+
+.message-md-paragraph {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.message-md-paragraph+.message-md-paragraph,
+.message-md-paragraph+.message-md-list,
+.message-md-list+.message-md-paragraph,
+.message-md-code+.message-md-paragraph,
+.message-md-paragraph+.message-md-code {
+  margin-top: 10px;
+}
+
+.message-md-list {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.message-md-code {
+  margin: 0;
+  padding: 9px 10px;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: auto;
+  white-space: pre;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.message-md-inline-code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bg) 80%, var(--border));
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 0.92em;
+}
+
+.markdown-bubble a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.html-bubble {
+  width: min(920px, 92%);
+  max-width: min(920px, 92%);
+  padding: 0;
+  overflow: hidden;
+  white-space: normal;
+}
+
+.message-html-frame {
+  display: block;
+  width: 100%;
+  height: min(70vh, 720px);
+  min-height: 360px;
+  border: 0;
+  background: white;
+}
 .rewind-chat {
   width: min(760px, 88%);
   margin: 0 0 4px 0;
@@ -83,11 +162,13 @@
   padding: 8px 10px;
 }
 
-/* .tool-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-} */
+.tool-card {
+  /* 😭为什么不支持 */
+  height: auto;
+  height: calc-size(auto);
+  interpolate-size: allow-keywords;
+  transition: height 0.3s ease;
+}
 
 .tool-card.orphan-result {
   border-color: color-mix(in srgb, var(--danger) 60%, var(--border));

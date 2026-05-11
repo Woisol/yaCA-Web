@@ -1,6 +1,7 @@
 import { MessagePrimitive, ThreadPrimitive, useMessage } from '@assistant-ui/react';
 import { RotateCcw } from 'lucide-react';
 import type { ChatMessage } from '../../api/types.js';
+import { createSandboxedHtmlDocument, getMessageRenderMode, parseMarkdownBlocks, renderMarkdownBlocks } from '../../lib/message-rendering.js';
 import './ThreadView.css';
 
 type ThreadViewProps = {
@@ -33,12 +34,28 @@ function ChatBubble({ onRewind }: ThreadViewProps) {
         <button className="rewind-chat" type="button" onClick={() => onRewind(message.index)}>
           <RotateCcw size={13} /> 回溯到这里
         </button>
-        <div className="message-bubble user"><MessagePrimitive.Parts /></div>
+        <RenderedMessageBubble className="message-bubble user" text={source?.text ?? ''} />
       </MessagePrimitive.If>
       <MessagePrimitive.If assistant>
-        {source?.kind === 'tool' ? <ToolCard message={source} /> : <div className="message-bubble assistant"><MessagePrimitive.Parts /></div>}
+        {source?.kind === 'tool' ? <ToolCard message={source} /> : <RenderedMessageBubble className="message-bubble assistant" text={source?.text ?? ''} />}
       </MessagePrimitive.If>
     </MessagePrimitive.Root>
+  );
+}
+
+function RenderedMessageBubble({ className, text }: { className: string; text: string }) {
+  if (getMessageRenderMode(text) === 'html') {
+    return (
+      <div className={`${className} html-bubble`}>
+        <iframe className="message-html-frame" sandbox="" srcDoc={createSandboxedHtmlDocument(text)} title="HTML preview" />
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${className} markdown-bubble`}>
+      {renderMarkdownBlocks(parseMarkdownBlocks(text))}
+    </div>
   );
 }
 
@@ -55,7 +72,6 @@ function ToolCard({ message }: { message: ChatMessage }) {
           <span className={`tool-status ${status}`}>{formatToolStatus(status)}</span>
         </div>
       </summary>
-      {/* {args ? <pre className="tool-output tool-args">{args}</pre> : null} */}
       {output ? <pre className="tool-output">{output}</pre> : null}
     </details>
   );
