@@ -38,18 +38,20 @@ export function AppShell({ yaca }: { yaca: YacaWebController }) {
           <span>yaCA Web</span>
         </header>
         <ThreadView />
-        <ComposerArea busy={yaca.busy} />
-        <StatusLine
-          connected={yaca.connected}
-          runtime={yaca.runtime}
-          tools={yaca.tools}
-          allowTools={yaca.allowTools}
-          allowCommands={yaca.allowCommands}
-          toolsOpen={toolsOpen}
-          onToolsOpenChange={setToolsOpen}
-          onAllowChange={(tools, commands) => void yaca.updateAllow(tools, commands)}
-          onTrustChange={(trusted) => void yaca.updateTrustMode(trusted)}
-        />
+        <div className="action-area">
+          <ComposerArea busy={yaca.busy} />
+          <StatusLine
+            connected={yaca.connected}
+            runtime={yaca.runtime}
+            tools={yaca.tools}
+            allowTools={yaca.allowTools}
+            allowCommands={yaca.allowCommands}
+            toolsOpen={toolsOpen}
+            onToolsOpenChange={setToolsOpen}
+            onAllowChange={(tools, commands) => void yaca.updateAllow(tools, commands)}
+            onTrustChange={(trusted) => void yaca.updateTrustMode(trusted)}
+          />
+        </div>
       </main>
       {yaca.pendingToolConfirm ? <ToolConfirmDialog pending={yaca.pendingToolConfirm} onResolve={yaca.resolveToolConfirm} /> : null}
       {yaca.error ? <Toast message={yaca.error} /> : null}

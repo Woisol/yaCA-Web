@@ -5,19 +5,22 @@ import './ComposerArea.css';
 export function ComposerArea({ busy }: { busy: boolean }) {
   return (
     <ComposerPrimitive.Root className="composer">
-      <ComposerPrimitive.Input className="composer-input" placeholder="Message yaCA..." autoFocus rows={3} />
-      <div className="composer-actions">
+      <ComposerPrimitive.Input className="composer-input" placeholder="Enter something creative..." autoFocus rows={3} />
+      {/* <div className="composer-action"> */}
+      {busy ? (
         <ComposerPrimitive.Cancel asChild>
-          <button className="secondary-button" type="button" disabled={!busy}>
+          <button className="composer-command is-stop" type="button" aria-label="Stop response">
             <X size={16} /> Stop
           </button>
         </ComposerPrimitive.Cancel>
+      ) : (
         <ComposerPrimitive.Send asChild>
-          <button className="send-button" type="button">
+            <button className="composer-command is-send" type="button" aria-label="Send message">
             <Send size={16} /> Send
           </button>
         </ComposerPrimitive.Send>
-      </div>
+      )}
+      {/* </div> */}
     </ComposerPrimitive.Root>
   );
 }

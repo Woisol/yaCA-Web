@@ -1,31 +1,77 @@
 .composer {
+  min-width: 0;
+  max-height: 300px;
   margin: 0 min(5vw, 56px) 10px;
   border: 1px solid var(--border);
   background: var(--panel);
+  overflow: hidden;
   border-radius: 8px;
-  padding: 10px;
+  padding: 10px 10px 8px;
+  /* 思考：为什么 AI 这么喜欢 grid 呢？ */
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
   gap: 10px;
 }
 
 .composer-input {
   width: 100%;
-  min-height: 78px;
-  resize: vertical;
+  min-height: 2.5rem;
+  max-height: calc(300px - 18px);
+  overflow-x: auto;
+  display: block;
+  resize: none;
   border: 0;
   outline: 0;
   background: transparent;
   color: var(--text);
+  line-height: 1.45;
+  padding: 2px 0;
 }
 
-.composer-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+/* .composer-action {
+  display: inline-flex;
+  align-items: flex-end;
+} */
+
+.composer-command {
+  min-width: 86px;
+  min-height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 12px;
+  font-weight: 700;
+}
+
+.composer-command.is-send {
+  color: #06201d;
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
+.composer-command.is-stop {
+  color: var(--text);
+  background: var(--panel-strong);
+  border-color: var(--border);
+}
+
+.composer-command:hover {
+  filter: brightness(0.95);
 }
 
 @media (max-width: 760px) {
   .composer {
     margin: 0 10px 8px;
+    padding: 8px;
+      gap: 8px;
+    }
+
+    .composer-command {
+      min-width: 74px;
   }
 }

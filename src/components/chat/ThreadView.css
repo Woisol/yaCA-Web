@@ -1,6 +1,7 @@
 .thread-root,
 .thread-viewport {
   min-height: 0;
+  flex: 1;
 }
 
 .thread-viewport {

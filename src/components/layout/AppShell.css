@@ -7,8 +7,12 @@
 
 .workspace {
   min-width: 0;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+    /* 神了学不来 grid，header 不展示 1fr 和 auto 各占一半，header 展示了就正常了…… */
+    /* display: grid; */
+    /* grid-template-rows: auto 1fr auto; */
   background: var(--bg);
 }
 
@@ -23,6 +27,9 @@
   background: var(--panel);
 }
 
+.action-area {
+  height: fit-content;
+}
 .desktop-hidden {
   display: none;
 }
