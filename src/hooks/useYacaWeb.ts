@@ -72,7 +72,7 @@ export function useYacaWeb() {
     };
   }, []);
 
-  const threadMessages = useMemo(() => toThreadMessages(messages), [messages]);
+  const threadMessages = useMemo(() => toThreadMessages(messages, runtime?.cwd), [messages, runtime?.cwd]);
 
   const sendUserMessage = useCallback(async (text: string, content?: string | MessagePart[]) => {
     const trimmed = text.trim();

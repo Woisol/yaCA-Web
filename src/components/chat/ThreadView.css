@@ -56,7 +56,7 @@
 
 .rewind-chat {
   width: min(760px, 88%);
-  margin: 0 0 4px auto;
+  margin: 0 0 4px 0;
   border: 0;
   background: transparent;
   color: var(--muted);
@@ -106,7 +106,7 @@
   min-width: 0;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   width: 100%;
 }
 
@@ -115,6 +115,7 @@
   width: 16px;
   height: 16px;
   line-height: 16px;
+  margin-left: 2px;
   flex: 0 0 auto;
   color: var(--muted);
   transform-origin: 30% 50%;

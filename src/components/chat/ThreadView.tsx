@@ -44,7 +44,6 @@ function ChatBubble({ onRewind }: ThreadViewProps) {
 
 function ToolCard({ message }: { message: ChatMessage }) {
   const status = message.status ?? 'running';
-  const args = message.args ? JSON.stringify(message.args, null, 2) : '';
   const output = message.result ?? '';
   const title = message.orphan ? 'tool_result' : `${message.toolName ?? 'tool'}(${formatToolArgsInline(message.args)})`;
 
