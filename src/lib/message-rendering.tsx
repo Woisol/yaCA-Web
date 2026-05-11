@@ -12,6 +12,7 @@ export function getMessageRenderMode(text: string): MessageRenderMode {
   return /^\s*<!doctype html>/i.test(text) ? 'html' : 'markdown';
 }
 
+// woc 你 tm 手拼 md 渲染的啊？？？
 export function parseMarkdownBlocks(text: string): MarkdownBlock[] {
   const lines = text.replace(/\r\n/g, '\n').split('\n');
   const blocks: MarkdownBlock[] = [];

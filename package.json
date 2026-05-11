@@ -5,7 +5,8 @@
   "main": "./dist/apps/yaca-web/src/server.js",
   "exports": {
     ".": "./dist/apps/yaca-web/src/server.js",
-    "./server.js": "./dist/apps/yaca-web/src/server.js"
+    "./server.js": "./dist/apps/yaca-web/src/server.js",
+    "./server/prompt.js": "./dist/apps/yaca-web/src/server/prompt.js"
   },
   "files": [
     "dist"
