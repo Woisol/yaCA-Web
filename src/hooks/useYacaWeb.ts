@@ -12,6 +12,7 @@ export type PendingToolConfirm = {
   kind: 'tool' | 'command';
 };
 
+// 其实就是 cli 中 state 的生态位
 export function useYacaWeb() {
   const [sessions, setSessions] = useState<SessionMeta[]>([]);
   const [sessionId, setSessionId] = useState<string | undefined>();

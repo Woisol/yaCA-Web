@@ -13,6 +13,7 @@ import type {
   UpdateConfigResponse
 } from './types.js';
 
+// 嗯一般你叫的是 http client
 export const rest = {
   listSessions: () => request<ListSessionsResponse>('/api/sessions'),
   createSession: (body: CreateSessionRequest = {}) => request<CreateSessionResponse>('/api/sessions', { method: 'POST', body }),

@@ -1,34 +1,10 @@
+import type { YacaConfig } from '@yaca/agent-core/storage/config-store.js';
+import type { SessionMeta } from '@yaca/agent-core/storage/session-store.js';
 import type { AgentEvent, ToolCall } from '@yaca/types';
 import type { ChatMessage } from '@yaca/ui/chat/types.js';
 
 export type { AgentEvent, ChatMessage, ToolCall };
-
-export type SessionMeta = {
-  id: string;
-  name: string;
-  project_path: string;
-  created_at: string;
-  updated_at: string;
-  message_count: number;
-  total_tokens: number;
-};
-
-export type YacaConfig = {
-  model: string;
-  base_url: string;
-  api_key?: string;
-  max_turns: number;
-  max_tool_retry: number;
-  tool_call: {
-    tool_call_compatible: boolean;
-    postpone_tool_calls: number;
-    try_fallback: boolean;
-    allow: {
-      tools: string[];
-      commands: string[];
-    };
-  };
-};
+export type { SessionMeta, YacaConfig };
 
 export type ApiError = {
   code: string;

@@ -4,13 +4,16 @@
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "skipLibCheck": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
     "ignoreDeprecations": "6.0",
     "paths": {
+      "@yaca/agent-core": ["../../packages/agent-core/src/index.ts"],
+      "@yaca/agent-core/*.js": ["../../packages/agent-core/src/*.ts"],
+      "@yaca/agent-core/*": ["../../packages/agent-core/src/*"],
       "@yaca/ui/*": ["../../packages/shared/ui/src/*"],
       "@yaca/types": ["../../packages/shared/types/index.ts"],
       "@yaca/types/*": ["../../packages/shared/types/*"]

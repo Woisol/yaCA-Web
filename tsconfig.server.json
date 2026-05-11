@@ -6,17 +6,22 @@
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "declaration": true,
     "outDir": "dist",
     "rootDir": "../..",
     "types": ["node"],
     "paths": {
       "@yaca/agent-core": ["../../packages/agent-core/src/index.ts"],
+      "@yaca/agent-core/*.js": ["../../packages/agent-core/src/*.ts"],
       "@yaca/agent-core/*": ["../../packages/agent-core/src/*"],
       "@yaca/types": ["../../packages/shared/types/index.ts"],
+      "@yaca/types/*.js": ["../../packages/shared/types/*.ts"],
       "@yaca/types/*": ["../../packages/shared/types/*"],
       "@yaca/ui": ["../../packages/shared/ui/src/index.ts"],
+      "@yaca/ui/*.js": ["../../packages/shared/ui/src/*.ts"],
       "@yaca/ui/*": ["../../packages/shared/ui/src/*"],
+      "@yaca/utils/*.js": ["../../packages/utils/*.ts"],
       "@yaca/utils/*": ["../../packages/utils/*"]
     }
   },
