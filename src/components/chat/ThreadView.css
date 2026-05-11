@@ -1,16 +1,15 @@
-.thread-root,
-.thread-viewport {
+.thread-root {
   min-height: 0;
-  padding: 10px 0;
   flex: 1;
+  margin: 10px min(5vw, 56px);
   overflow-y: auto;
 }
+
 
 /* 撑开容器的原因：svh 是相对视口高度，不是固定高度，百分比失效…… */
 .thread-viewport {
   /* height: 100%; */
-    flex: 1;
-  padding: 22px min(5vw, 56px);
+  flex: 1;
 }
 
 .empty-thread {
@@ -42,8 +41,8 @@
 
 .message-bubble.user {
   margin-left: auto;
-  background: #23313b;
-  border: 1px solid #34505f;
+  background: var(--panel-accent);
+    border: 1px solid var(--border);
 }
 
 .message-bubble.assistant {
@@ -53,7 +52,7 @@
 }
 
 @media (max-width: 760px) {
-  .thread-viewport {
-    padding: 16px;
+  .thread-root {
+    margin: 10px 8px;
   }
 }

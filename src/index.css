@@ -14,7 +14,8 @@
   --bg: #101114;
   --panel: #17191d;
   --panel-strong: #1f2228;
-  --border: #313640;
+  --panel-accent: #277e74;
+    --border: #313640;
   --text: #e8eaed;
   --muted: #9da5b4;
   --faint: #68707d;
@@ -32,6 +33,7 @@
   --bg: #f4f1ea;
   --panel: #fffaf1;
   --panel-strong: #f1eadf;
+  --panel-accent: #96d8d0;
   --border: #d9d0c2;
   --text: #25231f;
   --muted: #6f695f;
