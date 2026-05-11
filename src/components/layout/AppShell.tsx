@@ -1,4 +1,5 @@
 import { Menu } from 'lucide-react';
+import { useAui } from '@assistant-ui/react';
 import { useState, type DragEvent } from 'react';
 import { ComposerArea } from '../chat/ComposerArea.js';
 import { ThreadView } from '../chat/ThreadView.js';
@@ -14,6 +15,7 @@ import './AppShell.css';
 type YacaWebController = ReturnType<typeof useYacaWeb>;
 
 export function AppShell({ yaca }: { yaca: YacaWebController }) {
+  const aui = useAui();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [dragDepth, setDragDepth] = useState(0);
@@ -60,6 +62,13 @@ export function AppShell({ yaca }: { yaca: YacaWebController }) {
     setPendingDrop(null);
   };
 
+  const rewindToMessage = (index: number) => {
+    void yaca.rewindToMessage(index)
+      .then((input) => {
+        if (input) aui.composer().setText(input);
+      });
+  };
+
   return (
     <div className="app-shell" onDragEnter={onDragEnter} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
       <SessionSidebar
@@ -81,7 +90,7 @@ export function AppShell({ yaca }: { yaca: YacaWebController }) {
           </button>
           <span>yaCA Web</span>
         </header>
-        <ThreadView />
+        <ThreadView onRewind={rewindToMessage} />
         <div className="action-area">
           <ComposerArea
             busy={yaca.busy}

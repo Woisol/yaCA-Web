@@ -15,8 +15,9 @@
   --panel: #17191d;
   --panel-strong: #1f2228;
   --panel-accent: #277e74;
-    --border: #313640;
+  --border: #313640;
   --text: #e8eaed;
+  --text-reverse: #25231f;
   --muted: #9da5b4;
   --faint: #68707d;
   --accent: #5eead4;
@@ -36,6 +37,7 @@
   --panel-accent: #96d8d0;
   --border: #d9d0c2;
   --text: #25231f;
+  --text-reverse: #e8eaed;
   --muted: #6f695f;
   --faint: #92897b;
   --accent: #0f9f8f;

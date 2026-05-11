@@ -98,7 +98,7 @@
 }
 
 .composer-command.is-send {
-  color: #06201d;
+  color: var(--text-reverse);
   background: var(--accent-strong);
   border-color: var(--accent-strong);
 }

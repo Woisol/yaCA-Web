@@ -140,6 +140,14 @@ export function useYacaWeb() {
     setAllowCommands(response.allowCommands);
   }, []);
 
+  const rewindToMessage = useCallback(async (selectedIndex: number) => {
+    if (!sessionId) return '';
+    const response = await rest.rewind(sessionId, { selectedIndex });
+    setMessages(response.messages);
+    setBusy(false);
+    return response.input;
+  }, [sessionId]);
+
   const resolveToolConfirm = useCallback((approved: boolean) => {
     const pending = pendingToolConfirm;
     if (!pending) return;
@@ -205,6 +213,7 @@ export function useYacaWeb() {
     selectSession,
     sendText,
     sendContent,
+    rewindToMessage,
     updateTrustMode,
     updateAllow,
     resolveToolConfirm
