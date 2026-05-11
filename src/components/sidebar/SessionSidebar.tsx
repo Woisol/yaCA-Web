@@ -20,10 +20,11 @@ export function SessionSidebar({
 }) {
   return (
     <>
+      {/* 手写 translateX 的 sidebar 吗？有意思 */}
       <aside className={`sidebar ${open ? 'is-open' : ''}`}>
         <div className="sidebar-header">
           <div>
-            <div className="brand">yaCA</div>
+            <div className="brand">yaCA Web</div>
             <div className="sidebar-subtitle">sessions</div>
           </div>
           <button className="icon-button desktop-hidden" type="button" aria-label="Close sessions" onClick={onClose}>
@@ -48,7 +49,7 @@ export function SessionSidebar({
           {sessions.length === 0 ? <div className="empty-sidebar">No sessions yet.</div> : null}
         </nav>
       </aside>
-      {open ? <button className="scrim" type="button" aria-label="Close sessions" onClick={onClose} /> : null}
+      <button className={`scrim ${open ? 'open' : ''}`} type="button" aria-label="Close sessions" onClick={onClose} />
     </>
   );
 }

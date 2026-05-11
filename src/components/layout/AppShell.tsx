@@ -30,11 +30,12 @@ export function AppShell({ yaca }: { yaca: YacaWebController }) {
         }}
       />
       <main className="workspace">
+        {/* 移动适配 header */}
         <header className="mobile-topbar">
           <button className="icon-button" type="button" aria-label="Open sessions" onClick={() => setSidebarOpen(true)}>
             <Menu size={18} />
           </button>
-          <span>yaCA</span>
+          <span>yaCA Web</span>
         </header>
         <ThreadView />
         <ComposerArea busy={yaca.busy} />
