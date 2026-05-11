@@ -1,0 +1,44 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.48);
+}
+
+.confirm-dialog {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: min(520px, calc(100vw - 28px));
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-strong);
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.confirm-icon {
+  color: var(--warn);
+}
+
+.confirm-dialog h2 {
+  margin: 8px 0 10px;
+  font-size: 18px;
+}
+
+.confirm-dialog pre {
+  max-height: 220px;
+  overflow: auto;
+  margin: 0 0 14px;
+  padding: 10px;
+  border-radius: 7px;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

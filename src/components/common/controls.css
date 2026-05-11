@@ -1,0 +1,31 @@
+.icon-button,
+.secondary-button,
+.send-button {
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+  border-radius: 7px;
+  cursor: pointer;
+  min-height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.icon-button {
+  width: 32px;
+  padding: 0;
+}
+
+.send-button {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: #06201d;
+  font-weight: 700;
+}
+
+.secondary-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

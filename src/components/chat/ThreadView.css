@@ -1,0 +1,55 @@
+.thread-root,
+.thread-viewport {
+  min-height: 0;
+}
+
+.thread-viewport {
+  height: 100%;
+  overflow: auto;
+  padding: 22px min(5vw, 56px);
+}
+
+.empty-thread {
+  min-height: 48vh;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.empty-thread strong {
+  color: var(--text);
+  font-size: 20px;
+}
+
+.message {
+  display: flex;
+  margin: 0 0 14px;
+}
+
+.message-bubble {
+  max-width: min(760px, 88%);
+  padding: 11px 13px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.message-bubble.user {
+  margin-left: auto;
+  background: #23313b;
+  border: 1px solid #34505f;
+}
+
+.message-bubble.assistant {
+  margin-right: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 760px) {
+  .thread-viewport {
+    padding: 16px;
+  }
+}

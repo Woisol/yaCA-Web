@@ -1,0 +1,61 @@
+.tool-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: min(420px, 92vw);
+  max-height: 62vh;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-strong);
+  box-shadow: var(--shadow);
+  z-index: 20;
+}
+
+.popover-title {
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.tool-list {
+  display: grid;
+  gap: 6px;
+}
+
+.tool-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+
+.tool-row span {
+  display: grid;
+  gap: 2px;
+}
+
+.tool-row small {
+  color: var(--muted);
+}
+
+.command-allow {
+  margin-top: 12px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.command-allow textarea {
+  min-height: 76px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 8px;
+  color: var(--text);
+  background: var(--bg);
+  font-family: ui-monospace, Consolas, monospace;
+}

@@ -1,0 +1,77 @@
+.status-line {
+  min-height: 38px;
+  padding: 5px 10px;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--danger);
+}
+
+.connection-dot.online {
+  background: var(--ok);
+}
+
+.status-chip {
+  min-width: 0;
+  max-width: 24vw;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-spacer {
+  flex: 1;
+}
+
+.status-button,
+.trust-toggle {
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+  border-radius: 7px;
+  cursor: pointer;
+  min-height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.trust-toggle.trusted {
+  color: #22090d;
+  border-color: var(--danger);
+  background: var(--danger);
+  font-weight: 800;
+}
+
+.tool-popover-wrap {
+  position: relative;
+}
+
+@media (max-width: 760px) {
+  .status-line {
+    overflow-x: auto;
+  }
+
+  .status-chip {
+    max-width: 46vw;
+  }
+}

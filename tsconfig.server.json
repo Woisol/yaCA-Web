@@ -22,6 +22,7 @@
   },
   "include": [
     "src/server.ts",
+    "src/server/**/*.ts",
     "src/api/types.ts",
     "../../packages/shared/ui/src/**/*.ts"
   ]
