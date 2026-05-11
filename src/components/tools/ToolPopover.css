@@ -11,6 +11,7 @@
   background: var(--panel-strong);
   box-shadow: var(--shadow);
   z-index: 20;
+  animation: slide-in-up 0.15s ease forwards;
 }
 
 .popover-title {

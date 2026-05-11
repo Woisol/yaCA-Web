@@ -67,9 +67,10 @@
 }
 
 @media (max-width: 760px) {
-  .status-line {
+  /* 我们无从得知为什么要加此 CSS 导致 tool dialog 760px 下不显示 */
+    /* .status-line {
     overflow-x: auto;
-  }
+  */
 
   .status-chip {
     max-width: 46vw;

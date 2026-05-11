@@ -7,10 +7,9 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-  
-  :root,
-  :root[data-theme="dark"] {
+}
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #101114;
   --panel: #17191d;
@@ -26,46 +25,35 @@
   --ok: #86efac;
   --shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
   --scrim: rgba(0, 0, 0, 0.4);
-  }
-  
-  :root[data-theme="light"] {
-    color-scheme: light;
-    --bg: #f4f1ea;
-    --panel: #fffaf1;
-    --panel-strong: #f1eadf;
-    --border: #d9d0c2;
-    --text: #25231f;
-    --muted: #6f695f;
-    --faint: #92897b;
-    --accent: #0f9f8f;
-    --accent-strong: #0b7e73;
-    --danger: #c2415d;
-    --warn: #b87805;
-    --ok: #2f8f57;
-    --shadow: 0 24px 60px rgba(56, 42, 25, 0.18);
-    --scrim: rgba(41, 34, 25, 0.28);
-  }
-  
-  ::view-transition-old(theme),
-  ::view-transition-new(theme) {
-    animation-duration: 1.5s;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  
-  ::view-transition-new(theme) {
-    animation-name: theme-circle-reveal;
-  }
-  
-  @keyframes theme-circle-reveal {
-    from {
-      clip-path: circle(0 at var(--theme-circle-x, 50%) var(--theme-circle-y, 50%));
-    }
-  
-    to {
-      clip-path: circle(150vmax at var(--theme-circle-x, 50%) var(--theme-circle-y, 50%));
-    }
 }
 
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f1ea;
+  --panel: #fffaf1;
+  --panel-strong: #f1eadf;
+  --border: #d9d0c2;
+  --text: #25231f;
+  --muted: #6f695f;
+  --faint: #92897b;
+  --accent: #0f9f8f;
+  --accent-strong: #0b7e73;
+  --danger: #c2415d;
+  --warn: #b87805;
+  --ok: #2f8f57;
+  --shadow: 0 24px 60px rgba(56, 42, 25, 0.18);
+  --scrim: rgba(41, 34, 25, 0.28);
+}
+
+::view-transition-old(theme),
+::view-transition-new(theme) {
+  animation-duration: 1.5s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-new(theme) {
+  animation-name: theme-circle-reveal;
+}
 * {
   box-sizing: border-box;
 }
@@ -88,4 +76,26 @@ button {
 
 #root {
   min-height: 100svh;
+}
+
+@keyframes theme-circle-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-circle-x, 50%) var(--theme-circle-y, 50%));
+  }
+
+  to {
+    clip-path: circle(150vmax at var(--theme-circle-x, 50%) var(--theme-circle-y, 50%));
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
