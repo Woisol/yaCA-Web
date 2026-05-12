@@ -47,7 +47,6 @@ type ThreadViewProps = {
 type ThreadViewContextValue = ThreadViewProps;
 
 const ThreadViewContext = createContext<ThreadViewContextValue | null>(null);
-const THREAD_MESSAGE_COMPONENTS = { Message: ChatBubble };
 
 export function ThreadView({ onRewind, busy, messageCount }: ThreadViewProps) {
   const contextValue = useMemo(() => ({ onRewind, busy, messageCount }), [busy, messageCount, onRewind]);
@@ -62,14 +61,24 @@ export function ThreadView({ onRewind, busy, messageCount }: ThreadViewProps) {
               <span>Start a session or resume one from the sidebar.</span>
             </div>
           </ThreadPrimitive.Empty>
-          <ThreadPrimitive.Messages components={THREAD_MESSAGE_COMPONENTS} />
+          <ThreadPrimitive.Messages components={{ Message: ChatBubble }} />
         </ThreadPrimitive.Viewport>
       </ThreadPrimitive.Root>
     </ThreadViewContext.Provider>
   );
 }
 
+/**
+ * 简单来说，之前用的是 <ThreadPrimitive.Messages components={{ Message: () => <ChatBubble ... /> }} />
+ * ThreadView 因为流式数据更新时，()=>{} 创建出来的组件虽然类型相同但不是同一个组件，导致 React diff 算法认为需要销毁重构
+ * + iframe 的销毁重构是性能灾难，加上 ResizeObserver 事件……
+ *
+ * 而这里通过 context，切断渲染传递阿巴阿巴，总之更新更精确了
+ *
+ * 没用 React Profiler 是因为可能现在直接 server static dist 或者 dist 没有 sourcemap 的原因 React DevTools Profiler 显示 unsupported。
+ */
 function ChatBubble() {
+  // TODO 尝试一下不用 context 是否同样解决问题，如果解决那根因就只是 ()=> MessageBubble
   const { onRewind, busy, messageCount } = useThreadViewContext();
   const message = useMessage();
   const source = readYacaMessage(message?.metadata.custom.yaca);
