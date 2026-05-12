@@ -1,11 +1,11 @@
-import { Suspense, isValidElement, lazy, type ComponentPropsWithoutRef, type ReactElement, type ReactNode } from 'react';
+import { Suspense, createContext, isValidElement, lazy, useCallback, useContext, useEffect, useMemo, useRef, useState, type ComponentPropsWithoutRef, type ReactElement, type ReactNode } from 'react';
 import { MessagePrimitive, ThreadPrimitive, useMessage } from '@assistant-ui/react';
 import { RotateCcw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { ChatMessage } from '../../api/types.js';
 import { type Theme, useTheme } from '../../hooks/useTheme.js';
-import { createSandboxedHtmlDocument, getMessageRenderMode } from '../../lib/message-rendering.js';
+import { createSandboxedHtmlPayload, createSandboxedHtmlShell, getMessageRenderMode, LLM_HTML_MESSAGE_CHANNEL } from '../../lib/message-rendering.js';
 import './ThreadView.css';
 
 type HighlightedCodeProps = {
@@ -40,27 +40,40 @@ const LazySyntaxHighlighter = lazy(async () => {
 
 type ThreadViewProps = {
   onRewind(index: number): void;
+  busy: boolean;
+  messageCount: number;
 };
 
-export function ThreadView({ onRewind }: ThreadViewProps) {
+type ThreadViewContextValue = ThreadViewProps;
+
+const ThreadViewContext = createContext<ThreadViewContextValue | null>(null);
+const THREAD_MESSAGE_COMPONENTS = { Message: ChatBubble };
+
+export function ThreadView({ onRewind, busy, messageCount }: ThreadViewProps) {
+  const contextValue = useMemo(() => ({ onRewind, busy, messageCount }), [busy, messageCount, onRewind]);
+
   return (
-    <ThreadPrimitive.Root className="thread-root">
-      <ThreadPrimitive.Viewport className="thread-viewport">
-        <ThreadPrimitive.Empty>
-          <div className="empty-thread">
-            <strong>YACA Web ready.</strong>
-            <span>Start a session or resume one from the sidebar.</span>
-          </div>
-        </ThreadPrimitive.Empty>
-        <ThreadPrimitive.Messages components={{ Message: () => <ChatBubble onRewind={onRewind} /> }} />
-      </ThreadPrimitive.Viewport>
-    </ThreadPrimitive.Root>
+    <ThreadViewContext.Provider value={contextValue}>
+      <ThreadPrimitive.Root className="thread-root">
+        <ThreadPrimitive.Viewport className="thread-viewport">
+          <ThreadPrimitive.Empty>
+            <div className="empty-thread">
+              <strong>YACA Web ready.</strong>
+              <span>Start a session or resume one from the sidebar.</span>
+            </div>
+          </ThreadPrimitive.Empty>
+          <ThreadPrimitive.Messages components={THREAD_MESSAGE_COMPONENTS} />
+        </ThreadPrimitive.Viewport>
+      </ThreadPrimitive.Root>
+    </ThreadViewContext.Provider>
   );
 }
 
-function ChatBubble({ onRewind }: ThreadViewProps) {
+function ChatBubble() {
+  const { onRewind, busy, messageCount } = useThreadViewContext();
   const message = useMessage();
   const source = readYacaMessage(message?.metadata.custom.yaca);
+  const streaming = message.index === messageCount - 1 && busy && source?.kind === 'assistant';
 
   return (
     <MessagePrimitive.Root className="message">
@@ -68,20 +81,26 @@ function ChatBubble({ onRewind }: ThreadViewProps) {
         <button className="rewind-chat" type="button" onClick={() => onRewind(message.index)}>
           <RotateCcw size={13} /> 回溯到这里
         </button>
-        <RenderedMessageBubble className="message-bubble user" text={source?.text ?? ''} />
+        <RenderedMessageBubble className="message-bubble user" text={source?.text ?? ''} streaming={false} />
       </MessagePrimitive.If>
       <MessagePrimitive.If assistant>
-        {source?.kind === 'tool' ? <ToolCard message={source} /> : <RenderedMessageBubble className="message-bubble assistant" text={source?.text ?? ''} />}
+        {source?.kind === 'tool' ? <ToolCard message={source} /> : <RenderedMessageBubble className="message-bubble assistant" text={source?.text ?? ''} streaming={streaming} />}
       </MessagePrimitive.If>
     </MessagePrimitive.Root>
   );
 }
 
-function RenderedMessageBubble({ className, text }: { className: string; text: string }) {
+function useThreadViewContext(): ThreadViewContextValue {
+  const context = useContext(ThreadViewContext);
+  if (!context) throw new Error('ThreadView context is missing');
+  return context;
+}
+
+function RenderedMessageBubble({ className, text, streaming }: { className: string; text: string; streaming: boolean }) {
   if (getMessageRenderMode(text) === 'html') {
     return (
       <div className={`${className} html-bubble`}>
-        <iframe className="message-html-frame" sandbox="" srcDoc={createSandboxedHtmlDocument(text)} title="HTML preview" />
+        <LlmHtmlFrame text={text} streaming={streaming} />
       </div>
     );
   }
@@ -100,6 +119,90 @@ function RenderedMessageBubble({ className, text }: { className: string; text: s
       </ReactMarkdown>
     </div>
   );
+}
+
+function LlmHtmlFrame({ text, streaming }: { text: string; streaming: boolean }) {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const latestPayloadRef = useRef('');
+  const lastPostedPayloadRef = useRef('');
+  const [loaded, setLoaded] = useState(false);
+  const [height, setHeight] = useState(120);
+  const frameConfig = useMemo(() => createFrameConfig(), []);
+  const shell = useMemo(() => createSandboxedHtmlShell(frameConfig), [frameConfig]);
+  const mode = streaming ? 'stream' : 'final';
+  const payload = useMemo(() => createSandboxedHtmlPayload(text, mode), [mode, text]);
+
+  const postPayload = useCallback((force = false) => {
+    const target = iframeRef.current?.contentWindow;
+    if (!target) return;
+    const html = latestPayloadRef.current;
+    if (!force && html === lastPostedPayloadRef.current) return;
+    lastPostedPayloadRef.current = html;
+    target.postMessage({
+      channel: LLM_HTML_MESSAGE_CHANNEL,
+      type: 'update',
+      frameId: frameConfig.frameId,
+      token: frameConfig.token,
+      html
+    }, '*');
+  }, [frameConfig.frameId, frameConfig.token]);
+
+  useEffect(() => {
+    latestPayloadRef.current = payload;
+    if (loaded && !streaming) postPayload(true);
+  }, [loaded, payload, postPayload, streaming]);
+
+  useEffect(() => {
+    if (!loaded || !streaming) return;
+    postPayload(true);
+    const interval = window.setInterval(() => postPayload(), 100);
+    return () => window.clearInterval(interval);
+  }, [loaded, postPayload, streaming]);
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      const data = event.data;
+      if (!data || typeof data !== 'object') return;
+      if (data.channel !== LLM_HTML_MESSAGE_CHANNEL || data.type !== 'height') return;
+      if (data.frameId !== frameConfig.frameId || data.token !== frameConfig.token) return;
+      if (typeof data.height !== 'number' || !Number.isFinite(data.height)) return;
+      setHeight(Math.max(80, Math.ceil(data.height)));
+    };
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [frameConfig.frameId, frameConfig.token]);
+
+  return (
+    <iframe
+      ref={iframeRef}
+      className="message-html-frame"
+      sandbox="allow-scripts"
+      srcDoc={shell}
+      style={{ height }}
+      title="HTML preview"
+      onLoad={() => {
+        setLoaded(true);
+        window.setTimeout(() => postPayload(true), 0);
+      }}
+    />
+  );
+}
+
+function createFrameConfig(): { frameId: string; token: string } {
+  const token = createFrameToken();
+  return {
+    frameId: `llm-html-${token.replace(/[^a-zA-Z0-9]/g, '')}`,
+    token
+  };
+}
+
+function createFrameToken(): string {
+  const bytes = new Uint8Array(18);
+  if (globalThis.crypto?.getRandomValues && typeof btoa === 'function') {
+    globalThis.crypto.getRandomValues(bytes);
+    return btoa(String.fromCharCode(...bytes));
+  }
+  return Math.random().toString(36).slice(2);
 }
 
 function MarkdownLink({ href, children, ...props }: ComponentPropsWithoutRef<'a'>) {

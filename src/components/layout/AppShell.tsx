@@ -90,7 +90,7 @@ export function AppShell({ yaca }: { yaca: YacaWebController }) {
           </button>
           <span>yaCA Web</span>
         </header>
-        <ThreadView onRewind={rewindToMessage} />
+        <ThreadView onRewind={rewindToMessage} busy={yaca.busy} messageCount={yaca.messages.length} />
         <div className="action-area">
           <ComposerArea
             busy={yaca.busy}

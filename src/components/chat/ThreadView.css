@@ -200,14 +200,17 @@
 .message-html-frame {
   display: block;
   width: 100%;
-  height: min(70vh, 720px);
-  min-height: 360px;
+  height: auto;
+  min-height: 80px;
   border: 0;
   /* background: white; */
+  &::-webkit-scrollbar{
+    display: none;
+  }
 }
 .rewind-chat {
   width: min(760px, 88%);
-  margin: 0 0 4px 0;
+  margin: 0 auto 4px;
   border: 0;
   background: transparent;
   color: var(--muted);
