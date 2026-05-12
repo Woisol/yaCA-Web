@@ -14,4 +14,10 @@ export function createSandboxedHtmlPayload(html: string, mode: LlmHtmlPayloadMod
   return createLlmHtmlPayload(html, { mode });
 }
 
+export async function createHighlightedSandboxedHtmlPayload(html: string): Promise<string> {
+  const payload = createLlmHtmlPayload(html, { mode: 'final' });
+  const { highlightLlmHtmlCodeBlocks } = await import('@woisol-g/llm-html/highlight');
+  return highlightLlmHtmlCodeBlocks(payload);
+}
+
 export { LLM_HTML_MESSAGE_CHANNEL };

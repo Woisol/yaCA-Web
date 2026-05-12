@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { ChatMessage } from '../../api/types.js';
 import { type Theme, useTheme } from '../../hooks/useTheme.js';
-import { createSandboxedHtmlPayload, createSandboxedHtmlShell, getMessageRenderMode, LLM_HTML_MESSAGE_CHANNEL } from '../../lib/message-rendering.js';
+import { createHighlightedSandboxedHtmlPayload, createSandboxedHtmlPayload, createSandboxedHtmlShell, getMessageRenderMode, LLM_HTML_MESSAGE_CHANNEL } from '../../lib/message-rendering.js';
 import './ThreadView.css';
 
 type HighlightedCodeProps = {
@@ -47,6 +47,7 @@ type ThreadViewProps = {
 type ThreadViewContextValue = ThreadViewProps;
 
 const ThreadViewContext = createContext<ThreadViewContextValue | null>(null);
+const THREAD_MESSAGE_COMPONENTS = { Message: ChatBubble };
 
 export function ThreadView({ onRewind, busy, messageCount }: ThreadViewProps) {
   const contextValue = useMemo(() => ({ onRewind, busy, messageCount }), [busy, messageCount, onRewind]);
@@ -61,7 +62,7 @@ export function ThreadView({ onRewind, busy, messageCount }: ThreadViewProps) {
               <span>Start a session or resume one from the sidebar.</span>
             </div>
           </ThreadPrimitive.Empty>
-          <ThreadPrimitive.Messages components={{ Message: ChatBubble }} />
+          <ThreadPrimitive.Messages components={THREAD_MESSAGE_COMPONENTS} />
         </ThreadPrimitive.Viewport>
       </ThreadPrimitive.Root>
     </ThreadViewContext.Provider>
@@ -160,6 +161,19 @@ function LlmHtmlFrame({ text, streaming }: { text: string; streaming: boolean })
     latestPayloadRef.current = payload;
     if (loaded && !streaming) postPayload(true);
   }, [loaded, payload, postPayload, streaming]);
+
+  useEffect(() => {
+    if (!loaded || streaming) return;
+    let cancelled = false;
+    void createHighlightedSandboxedHtmlPayload(text).then((highlightedPayload) => {
+      if (cancelled) return;
+      latestPayloadRef.current = highlightedPayload;
+      postPayload(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [loaded, postPayload, streaming, text]);
 
   useEffect(() => {
     if (!loaded || !streaming) return;
