@@ -1,6 +1,7 @@
 import type http from 'node:http';
 import { applyRewindSelection, renderSessionMessages } from '@woisol-g/yaca/web-runtime.js';
 import { json, notFound, readJson } from './response.js';
+import type { UpdateSessionRequest } from './api-types.js';
 import type { YacaWebRuntime } from './types.js';
 
 export async function handleSessionApi(
@@ -12,6 +13,10 @@ export async function handleSessionApi(
 ): Promise<void> {
   if (!action && request.method === 'GET') {
     return json(response, { session: await runtime.store.getSession(sessionId) ?? null });
+  }
+  if (!action && request.method === 'PATCH') {
+    const body = await readJson<UpdateSessionRequest>(request);
+    return json(response, { session: await runtime.store.renameSession(sessionId, body.name ?? '') });
   }
   if (action === 'messages' && request.method === 'GET') {
     return json(response, { messages: renderSessionMessages(await runtime.store.readMessages(sessionId)) });

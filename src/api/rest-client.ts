@@ -8,6 +8,8 @@ import type {
   ListToolsResponse,
   RewindRequest,
   RewindResponse,
+  UpdateSessionRequest,
+  UpdateSessionResponse,
   UpdateAllowToolsRequest,
   UpdateConfigRequest,
   UpdateConfigResponse
@@ -18,6 +20,7 @@ export const rest = {
   listSessions: () => request<ListSessionsResponse>('/api/sessions'),
   createSession: (body: CreateSessionRequest = {}) => request<CreateSessionResponse>('/api/sessions', { method: 'POST', body }),
   getSession: (sessionId: string) => request<GetSessionResponse>(`/api/sessions/${encodeURIComponent(sessionId)}`),
+  updateSession: (sessionId: string, body: UpdateSessionRequest) => request<UpdateSessionResponse>(`/api/sessions/${encodeURIComponent(sessionId)}`, { method: 'PATCH', body }),
   getMessages: (sessionId: string) => request<GetMessagesResponse>(`/api/sessions/${encodeURIComponent(sessionId)}/messages`),
   rewind: (sessionId: string, body: RewindRequest) => request<RewindResponse>(`/api/sessions/${encodeURIComponent(sessionId)}/rewind`, { method: 'POST', body }),
   getConfig: () => request<GetConfigResponse>('/api/config'),

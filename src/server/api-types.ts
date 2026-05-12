@@ -25,6 +25,10 @@ export type CreateSessionRequest = {
   name?: string;
 };
 
+export type UpdateSessionRequest = {
+  name?: string;
+};
+
 export type UpdateConfigRequest = {
   model?: string;
   baseUrl?: string;

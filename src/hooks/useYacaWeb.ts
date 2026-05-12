@@ -4,6 +4,7 @@ import type { ChatMessage, MessagePart, SessionMeta, ToolCall, YacaConfig, Runti
 import { rest } from '../api/rest-client.js';
 import { createWsClient, type WsClient } from '../api/ws-client.js';
 import { appendMessageText, toThreadMessages } from '../lib/assistant.js';
+import { readCurrentSessionRoute, writeSessionRoute } from '../lib/session-route.js';
 
 export type PendingToolConfirm = {
   id: string;
@@ -27,6 +28,18 @@ export function useYacaWeb() {
   const [error, setError] = useState<string | undefined>();
   const [pendingToolConfirm, setPendingToolConfirm] = useState<PendingToolConfirm | null>(null);
   const wsRef = useRef<WsClient | null>(null);
+  const sessionsRef = useRef<SessionMeta[]>([]);
+
+  useEffect(() => {
+    sessionsRef.current = sessions;
+  }, [sessions]);
+
+  const loadSession = useCallback(async (id: string, options: { updateRoute?: 'push' | 'replace' | false } = {}) => {
+    setSessionId(id);
+    setMessages((await rest.getMessages(id)).messages);
+    if (options.updateRoute) writeSessionRoute(id, options.updateRoute);
+    wsRef.current?.send({ type: 'session.resume', id: crypto.randomUUID(), sessionId: id });
+  }, []);
 
   const loadInitial = useCallback(async () => {
     const [sessionResponse, configResponse, toolsResponse] = await Promise.all([
@@ -40,16 +53,37 @@ export function useYacaWeb() {
     setTools(toolsResponse.tools);
     setAllowTools(toolsResponse.allowTools);
     setAllowCommands(toolsResponse.allowCommands);
-    const first = sessionResponse.sessions[0];
+    const routedSessionId = readCurrentSessionRoute();
+    const first = routedSessionId && sessionResponse.sessions.some((session) => session.id === routedSessionId)
+      ? sessionResponse.sessions.find((session) => session.id === routedSessionId)
+      : sessionResponse.sessions[0];
     if (first) {
       setSessionId(first.id);
+      writeSessionRoute(first.id, 'replace');
       setMessages((await rest.getMessages(first.id)).messages);
+    } else {
+      writeSessionRoute(undefined, 'replace');
     }
   }, []);
 
   useEffect(() => {
     void loadInitial().catch((cause: unknown) => setError(formatError(cause)));
   }, [loadInitial]);
+
+  useEffect(() => {
+    const onPopState = () => {
+      const id = readCurrentSessionRoute();
+      if (!id) {
+        setSessionId(undefined);
+        setMessages([]);
+        return;
+      }
+      if (!sessionsRef.current.some((session) => session.id === id)) return;
+      void loadSession(id, { updateRoute: false }).catch((cause: unknown) => setError(formatError(cause)));
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [loadSession]);
 
   useEffect(() => {
     const client = createWsClient({
@@ -84,15 +118,28 @@ export function useYacaWeb() {
         nextSessionId = created.session.id;
         setSessionId(nextSessionId);
         setSessions((current) => [created.session, ...current]);
+        writeSessionRoute(nextSessionId);
       } catch (cause) {
         setBusy(false);
         setError(formatError(cause));
         return;
       }
+    } else {
+      const currentSession = sessions.find((session) => session.id === nextSessionId);
+      if (currentSession && shouldRenameSessionFromFirstMessage(currentSession, messages)) {
+        const nextName = trimmed.slice(0, 80);
+        setSessions((current) => current.map((session) => session.id === nextSessionId ? { ...session, name: nextName } : session));
+        try {
+          const response = await rest.updateSession(nextSessionId, { name: nextName });
+          setSessions((current) => current.map((session) => session.id === response.session.id ? response.session : session));
+        } catch (cause) {
+          setError(formatError(cause));
+        }
+      }
     }
     setMessages((current) => [...current, { kind: 'user', text: trimmed }]);
     wsRef.current?.send({ type: 'chat.send', id: crypto.randomUUID(), sessionId: nextSessionId, text: trimmed, content });
-  }, [sessionId]);
+  }, [messages, sessionId, sessions]);
 
   const sendText = useCallback(async (text: string) => {
     await sendUserMessage(text);
@@ -119,13 +166,12 @@ export function useYacaWeb() {
     setSessions((current) => [created.session, ...current]);
     setSessionId(created.session.id);
     setMessages([]);
+    writeSessionRoute(created.session.id);
   }, []);
 
   const selectSession = useCallback(async (id: string) => {
-    setSessionId(id);
-    setMessages((await rest.getMessages(id)).messages);
-    wsRef.current?.send({ type: 'session.resume', id: crypto.randomUUID(), sessionId: id });
-  }, []);
+    await loadSession(id, { updateRoute: 'push' });
+  }, [loadSession]);
 
   const updateTrustMode = useCallback(async (trustMode: boolean) => {
     const response = await rest.updateConfig({ trustMode });
@@ -157,7 +203,10 @@ export function useYacaWeb() {
   function handleWsMessage(message: ServerWsMessage): void {
     if (message.type === 'chat.messages') {
       setMessages(message.messages);
-      if (message.sessionId) setSessionId(message.sessionId);
+      if (message.sessionId) {
+        setSessionId(message.sessionId);
+        writeSessionRoute(message.sessionId, 'replace');
+      }
       return;
     }
     if (message.type === 'chat.line') {
@@ -165,7 +214,10 @@ export function useYacaWeb() {
       return;
     }
     if (message.type === 'chat.done') {
-      if (message.sessionId) setSessionId(message.sessionId);
+      if (message.sessionId) {
+        setSessionId(message.sessionId);
+        writeSessionRoute(message.sessionId, 'replace');
+      }
       setBusy(false);
       return;
     }
@@ -217,6 +269,10 @@ export function useYacaWeb() {
     updateAllow,
     resolveToolConfirm
   };
+}
+
+function shouldRenameSessionFromFirstMessage(session: SessionMeta, messages: ChatMessage[]): boolean {
+  return session.name === 'New session' && session.message_count === 0 && messages.length === 0;
 }
 
 function formatError(error: unknown): string {

@@ -69,6 +69,11 @@ export function AppShell({ yaca }: { yaca: YacaWebController }) {
       });
   };
 
+  // useEffect(() => {
+  //   const sessionId = window.location.pathname.slice(1);
+  //   if (sessionId) void yaca.selectSession(decodeURIComponent(sessionId));
+  // }, [])
+
   return (
     <div className="app-shell" onDragEnter={onDragEnter} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
       <SessionSidebar

@@ -132,6 +132,7 @@ function RenderedMessageBubble({ className, text, streaming }: { className: stri
 }
 
 function LlmHtmlFrame({ text, streaming }: { text: string; streaming: boolean }) {
+  const { theme } = useTheme();
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const latestPayloadRef = useRef('');
   const lastPostedPayloadRef = useRef('');
@@ -153,14 +154,19 @@ function LlmHtmlFrame({ text, streaming }: { text: string; streaming: boolean })
       type: 'update',
       frameId: frameConfig.frameId,
       token: frameConfig.token,
+      theme,
       html
     }, '*');
-  }, [frameConfig.frameId, frameConfig.token]);
+  }, [frameConfig.frameId, frameConfig.token, theme]);
 
   useEffect(() => {
     latestPayloadRef.current = payload;
     if (loaded && !streaming) postPayload(true);
   }, [loaded, payload, postPayload, streaming]);
+
+  useEffect(() => {
+    if (loaded) postPayload(true);
+  }, [loaded, postPayload, theme]);
 
   useEffect(() => {
     if (!loaded || streaming) return;

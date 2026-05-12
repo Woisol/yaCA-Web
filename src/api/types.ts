@@ -37,6 +37,14 @@ export type CreateSessionResponse = {
   session: SessionMeta;
 };
 
+export type UpdateSessionRequest = {
+  name?: string;
+};
+
+export type UpdateSessionResponse = {
+  session: SessionMeta;
+};
+
 export type GetSessionResponse = {
   session: SessionMeta | null;
 };
