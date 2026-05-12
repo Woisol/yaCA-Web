@@ -45,6 +45,10 @@ export type UpdateSessionResponse = {
   session: SessionMeta;
 };
 
+export type DeleteSessionResponse = {
+  session: SessionMeta;
+};
+
 export type GetSessionResponse = {
   session: SessionMeta | null;
 };

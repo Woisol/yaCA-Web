@@ -1,6 +1,7 @@
 import type {
   CreateSessionRequest,
   CreateSessionResponse,
+  DeleteSessionResponse,
   GetConfigResponse,
   GetMessagesResponse,
   GetSessionResponse,
@@ -21,6 +22,7 @@ export const rest = {
   createSession: (body: CreateSessionRequest = {}) => request<CreateSessionResponse>('/api/sessions', { method: 'POST', body }),
   getSession: (sessionId: string) => request<GetSessionResponse>(`/api/sessions/${encodeURIComponent(sessionId)}`),
   updateSession: (sessionId: string, body: UpdateSessionRequest) => request<UpdateSessionResponse>(`/api/sessions/${encodeURIComponent(sessionId)}`, { method: 'PATCH', body }),
+  deleteSession: (sessionId: string) => request<DeleteSessionResponse>(`/api/sessions/${encodeURIComponent(sessionId)}`, { method: 'DELETE' }),
   getMessages: (sessionId: string) => request<GetMessagesResponse>(`/api/sessions/${encodeURIComponent(sessionId)}/messages`),
   rewind: (sessionId: string, body: RewindRequest) => request<RewindResponse>(`/api/sessions/${encodeURIComponent(sessionId)}/rewind`, { method: 'POST', body }),
   getConfig: () => request<GetConfigResponse>('/api/config'),

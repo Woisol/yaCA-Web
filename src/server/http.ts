@@ -57,7 +57,7 @@ async function handleApiRequest(
 
   const sessionMatch = /^\/api\/sessions\/([^/]+)(?:\/(messages|rewind))?$/.exec(url.pathname);
   if (sessionMatch) {
-    return await handleSessionApi(request, response, runtime, sessionMatch[1] ?? '', sessionMatch[2]);
+    return await handleSessionApi(request, response, runtime, hub, sessionMatch[1] ?? '', sessionMatch[2]);
   }
 
   if (request.method === 'GET' && url.pathname === '/api/config') {

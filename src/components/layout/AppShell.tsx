@@ -82,6 +82,8 @@ export function AppShell({ yaca }: { yaca: YacaWebController }) {
         activeSessionId={yaca.sessionId}
         onClose={() => setSidebarOpen(false)}
         onCreate={() => void yaca.createSession()}
+        onRename={(id, name) => void yaca.renameSession(id, name)}
+        onDelete={(id) => void yaca.deleteSession(id)}
         onSelect={(id) => {
           setSidebarOpen(false);
           void yaca.selectSession(id);

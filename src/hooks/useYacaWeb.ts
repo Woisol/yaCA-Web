@@ -173,6 +173,24 @@ export function useYacaWeb() {
     await loadSession(id, { updateRoute: 'push' });
   }, [loadSession]);
 
+  const renameSession = useCallback(async (id: string, name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    setSessions((current) => current.map((session) => session.id === id ? { ...session, name: trimmed.slice(0, 80) } : session));
+    const response = await rest.updateSession(id, { name: trimmed });
+    setSessions((current) => current.map((session) => session.id === response.session.id ? response.session : session));
+  }, []);
+
+  const deleteSession = useCallback(async (id: string) => {
+    await rest.deleteSession(id);
+    setSessions((current) => current.filter((session) => session.id !== id));
+    if (id === sessionId) {
+      setSessionId(undefined);
+      setMessages([]);
+      writeSessionRoute(undefined);
+    }
+  }, [sessionId]);
+
   const updateTrustMode = useCallback(async (trustMode: boolean) => {
     const response = await rest.updateConfig({ trustMode });
     setConfig(response.config);
@@ -262,6 +280,8 @@ export function useYacaWeb() {
     pendingToolConfirm,
     createSession,
     selectSession,
+    renameSession,
+    deleteSession,
     sendText,
     sendContent,
     rewindToMessage,
