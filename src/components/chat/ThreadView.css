@@ -62,20 +62,40 @@
   }
 }
 
+.markdown-bubble h1,
+.markdown-bubble h2,
+.markdown-bubble h3,
+.markdown-bubble h4,
+.markdown-bubble h5,
+.markdown-bubble h6,
 .message-md-heading {
   margin: 0 0 8px;
   line-height: 1.25;
 }
 
+.markdown-bubble h1:not(:first-child),
+.markdown-bubble h2:not(:first-child),
+.markdown-bubble h3:not(:first-child),
+.markdown-bubble h4:not(:first-child),
+.markdown-bubble h5:not(:first-child),
+.markdown-bubble h6:not(:first-child),
 .message-md-heading:not(:first-child) {
   margin-top: 12px;
 }
 
+.markdown-bubble p,
 .message-md-paragraph {
   margin: 0;
   line-height: 1.65;
 }
 
+.markdown-bubble p+p,
+.markdown-bubble p+ul,
+.markdown-bubble p+ol,
+.markdown-bubble ul+p,
+.markdown-bubble ol+p,
+.markdown-bubble pre+p,
+.markdown-bubble p+pre,
 .message-md-paragraph+.message-md-paragraph,
 .message-md-paragraph+.message-md-list,
 .message-md-list+.message-md-paragraph,
@@ -84,12 +104,15 @@
   margin-top: 10px;
 }
 
+.markdown-bubble ul,
+.markdown-bubble ol,
 .message-md-list {
   margin: 0;
   padding-left: 20px;
   line-height: 1.6;
 }
 
+.markdown-bubble pre,
 .message-md-code {
   margin: 0;
   padding: 9px 10px;
@@ -103,12 +126,28 @@
   line-height: 1.5;
 }
 
+.message-md-highlight {
+  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+}
+
+.message-md-code-tag {
+  font-family: Consolas, Monaco, "Courier New", monospace;
+}
+
+.markdown-bubble :not(pre)>code,
 .message-md-inline-code {
   padding: 1px 4px;
   border-radius: 4px;
   background: color-mix(in srgb, var(--bg) 80%, var(--border));
   font-family: Consolas, Monaco, "Courier New", monospace;
   font-size: 0.92em;
+}
+
+.message-md-code .message-md-inline-code {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: inherit;
 }
 
 .markdown-bubble a {

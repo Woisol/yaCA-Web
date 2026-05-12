@@ -1,7 +1,11 @@
+import { isValidElement, type ComponentPropsWithoutRef, type ReactElement, type ReactNode } from 'react';
 import { MessagePrimitive, ThreadPrimitive, useMessage } from '@assistant-ui/react';
 import { RotateCcw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import type { ChatMessage } from '../../api/types.js';
-import { createSandboxedHtmlDocument, getMessageRenderMode, parseMarkdownBlocks, renderMarkdownBlocks } from '../../lib/message-rendering.js';
+import { createSandboxedHtmlDocument, getMessageRenderMode } from '../../lib/message-rendering.js';
 import './ThreadView.css';
 
 type ThreadViewProps = {
@@ -54,9 +58,92 @@ function RenderedMessageBubble({ className, text }: { className: string; text: s
 
   return (
     <div className={`${className} markdown-bubble`}>
-      {renderMarkdownBlocks(parseMarkdownBlocks(text))}
+      <ReactMarkdown
+        components={{
+          a: MarkdownLink,
+          code: MarkdownCode,
+          pre: MarkdownPre
+        }}
+      >
+        {text}
+      </ReactMarkdown>
     </div>
   );
+}
+
+function MarkdownLink({ href, children, ...props }: ComponentPropsWithoutRef<'a'>) {
+  return (
+    <a href={sanitizeMarkdownHref(href)} target="_blank" rel="noreferrer" {...props}>
+      {children}
+    </a>
+  );
+}
+
+function MarkdownCode({ className, children, ...props }: ComponentPropsWithoutRef<'code'>) {
+  return (
+    <code className={className ?? 'message-md-inline-code'} {...props}>
+      {children}
+    </code>
+  );
+}
+
+function MarkdownPre({ children, ...props }: ComponentPropsWithoutRef<'pre'>) {
+  const code = getCodeElement(children);
+  const className = code?.props.className;
+  const language = getCodeLanguage(className);
+  if (code && language) {
+    return (
+      <SyntaxHighlighter
+        PreTag="pre"
+        className="message-md-code message-md-highlight"
+        codeTagProps={{ className: 'message-md-code-tag' }}
+        customStyle={{ margin: 0 }}
+        language={language}
+        style={oneDark}
+      >
+        {toText(code.props.children).replace(/\n$/, '')}
+      </SyntaxHighlighter>
+    );
+  }
+
+  return (
+    <pre className="message-md-code" {...props}>
+      {children}
+    </pre>
+  );
+}
+
+type CodeElementProps = {
+  className?: string;
+  children?: ReactNode;
+};
+
+function getCodeElement(children: ReactNode): ReactElement<CodeElementProps> | null {
+  if (isValidElement<CodeElementProps>(children) && children.type === 'code') {
+    return children;
+  }
+  if (Array.isArray(children) && children.length === 1 && isValidElement<CodeElementProps>(children[0]) && children[0].type === 'code') {
+    return children[0];
+  }
+  return null;
+}
+
+function getCodeLanguage(className?: string): string | null {
+  const match = /(?:^|\s)language-([^\s]+)/.exec(className ?? '');
+  return match?.[1]?.toLowerCase() ?? null;
+}
+
+function toText(value: ReactNode): string {
+  if (value === null || value === undefined || typeof value === 'boolean') return '';
+  if (typeof value === 'string' || typeof value === 'number') return String(value);
+  if (Array.isArray(value)) return value.map(toText).join('');
+  return '';
+}
+
+function sanitizeMarkdownHref(href?: string): string {
+  const trimmed = href?.trim() ?? '';
+  if (/^(https?:|mailto:|tel:|\/|#)/i.test(trimmed)) return trimmed;
+  return '#';
 }
 
 function ToolCard({ message }: { message: ChatMessage }) {
