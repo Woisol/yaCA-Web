@@ -1,6 +1,6 @@
 {
   "name": "@woisol-g/yaca-web",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Web UI package for yaCA.",
   "type": "module",
   "main": "./dist/server.js",
@@ -14,14 +14,14 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vp dev",
-    "build": "tsc -b && vp build && tsc -p tsconfig.server.json",
-    "lint": "vp lint .",
+    "dev": "pnpm --filter @woisol-g/llm-html run build && vp dev",
+    "build": "pnpm --filter @woisol-g/llm-html run build && tsc -b && vp build && tsc -p tsconfig.server.json",
+    "lint": "pnpm --filter @woisol-g/llm-html run build && vp lint .",
     "preview": "vp preview"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.0",
-    "@woisol-g/llm-html": "workspace:*",
+    "@woisol-g/llm-html": "workspace:^",
     "lucide-react": "^1.14.0",
     "react": "=19.2.5",
     "react-dom": "=19.2.5",
@@ -31,7 +31,7 @@
     "ws": "^8.20.0"
   },
   "peerDependencies": {
-    "@woisol-g/yaca": "1.5.0"
+    "@woisol-g/yaca": "1.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
