@@ -1,13 +1,40 @@
-import { isValidElement, type ComponentPropsWithoutRef, type ReactElement, type ReactNode } from 'react';
+import { Suspense, isValidElement, lazy, type ComponentPropsWithoutRef, type ReactElement, type ReactNode } from 'react';
 import { MessagePrimitive, ThreadPrimitive, useMessage } from '@assistant-ui/react';
 import { RotateCcw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
 import type { ChatMessage } from '../../api/types.js';
 import { createSandboxedHtmlDocument, getMessageRenderMode } from '../../lib/message-rendering.js';
 import './ThreadView.css';
-import remarkGfm from 'remark-gfm';
+
+type HighlightedCodeProps = {
+  code: string;
+  language: string;
+};
+
+const LazySyntaxHighlighter = lazy(async () => {
+  const [{ Prism: SyntaxHighlighter }, { oneLight, oneDark }] = await Promise.all([
+    import('react-syntax-highlighter'),
+    import('react-syntax-highlighter/dist/esm/styles/prism')
+  ]);
+
+  return {
+    default: function HighlightedCode({ code, language }: HighlightedCodeProps) {
+      return (
+        <SyntaxHighlighter
+          PreTag="div"
+          className="message-md-code message-md-highlight"
+          codeTagProps={{ className: 'message-md-code-tag' }}
+          customStyle={{ margin: 0 }}
+          language={language}
+          style={window.matchMedia('(prefers-color-scheme: dark)').matches ? oneDark : oneLight}
+        >
+          {code}
+        </SyntaxHighlighter>
+      );
+    }
+  };
+});
 
 type ThreadViewProps = {
   onRewind(index: number): void;
@@ -93,18 +120,12 @@ function MarkdownPre({ children, ...props }: ComponentPropsWithoutRef<'pre'>) {
   const code = getCodeElement(children);
   const className = code?.props.className;
   const language = getCodeLanguage(className);
+  const source = code ? toText(code.props.children).replace(/\n$/, '') : '';
   if (code && language) {
     return (
-      <SyntaxHighlighter
-        PreTag="pre"
-        className="message-md-code message-md-highlight"
-        codeTagProps={{ className: 'message-md-code-tag' }}
-        customStyle={{ margin: 0 }}
-        language={language}
-        style={oneDark}
-      >
-        {toText(code.props.children).replace(/\n$/, '')}
-      </SyntaxHighlighter>
+      <Suspense fallback={<CodeFallback code={source} />}>
+        <LazySyntaxHighlighter code={source} language={language} />
+      </Suspense>
     );
   }
 
@@ -115,16 +136,24 @@ function MarkdownPre({ children, ...props }: ComponentPropsWithoutRef<'pre'>) {
   );
 }
 
+function CodeFallback({ code }: { code: string }) {
+  return (
+    <pre className="message-md-code">
+      <code>{code}</code>
+    </pre>
+  );
+}
+
 type CodeElementProps = {
   className?: string;
   children?: ReactNode;
 };
 
 function getCodeElement(children: ReactNode): ReactElement<CodeElementProps> | null {
-  if (isValidElement<CodeElementProps>(children) && children.type === 'code') {
+  if (isValidElement<CodeElementProps>(children)) {
     return children;
   }
-  if (Array.isArray(children) && children.length === 1 && isValidElement<CodeElementProps>(children[0]) && children[0].type === 'code') {
+  if (Array.isArray(children) && children.length === 1 && isValidElement<CodeElementProps>(children[0])) {
     return children[0];
   }
   return null;
