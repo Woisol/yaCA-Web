@@ -8,27 +8,15 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "outDir": ".server-build",
-    "rootDir": "../..",
+    "outDir": "dist",
+    "rootDir": "src",
     "types": ["node"],
     "paths": {
-      "@woisol-g/yaca/web-runtime.js": ["../../apps/web-runtime.ts"],
-      "@yaca/agent-core": ["../../packages/agent-core/src/index.ts"],
-      "@yaca/agent-core/*.js": ["../../packages/agent-core/src/*.ts"],
-      "@yaca/agent-core/*": ["../../packages/agent-core/src/*"],
-      "@yaca/types": ["../../packages/shared/types/index.ts"],
-      "@yaca/types/*.js": ["../../packages/shared/types/*.ts"],
-      "@yaca/types/*": ["../../packages/shared/types/*"],
-      "@yaca/ui": ["../../packages/shared/ui/src/index.ts"],
-      "@yaca/ui/*.js": ["../../packages/shared/ui/src/*.ts"],
-      "@yaca/ui/*": ["../../packages/shared/ui/src/*"],
-      "@yaca/utils/*.js": ["../../packages/utils/*.ts"],
-      "@yaca/utils/*": ["../../packages/utils/*"]
+      "@woisol-g/yaca/web-runtime.js": ["../../dist/web-runtime.d.ts"]
     }
   },
   "include": [
     "src/server.ts",
-    "src/server/**/*.ts",
-    "src/api/types.ts"
+    "src/server/**/*.ts"
   ]
 }

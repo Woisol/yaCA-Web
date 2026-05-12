@@ -1,5 +1,5 @@
 import type http from 'node:http';
-import type { CreateSessionRequest, UpdateAllowToolsRequest, UpdateConfigRequest } from '../api/types.js';
+import type { CreateSessionRequest, UpdateAllowToolsRequest, UpdateConfigRequest } from './api-types.js';
 import { getRuntimeInfo, listTools, updateRuntimeConfig } from './config.js';
 import { handleSessionApi } from './session-api.js';
 import { json, notFound, readJson, toApiError } from './response.js';

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AppendMessage, ExternalStoreAdapter, ThreadMessage } from '@assistant-ui/react';
-import type { ChatMessage, SessionMeta, ToolCall, YacaConfig, RuntimeInfo, ToolDefinitionView, ServerWsMessage } from '../api/types.js';
-import type { MessagePart } from '@yaca/types';
+import type { ChatMessage, MessagePart, SessionMeta, ToolCall, YacaConfig, RuntimeInfo, ToolDefinitionView, ServerWsMessage } from '../api/types.js';
 import { rest } from '../api/rest-client.js';
 import { createWsClient, type WsClient } from '../api/ws-client.js';
 import { appendMessageText, toThreadMessages } from '../lib/assistant.js';

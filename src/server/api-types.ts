@@ -8,10 +8,6 @@ export type ApiError = {
   details?: unknown;
 };
 
-export type ApiErrorResponse = {
-  error: ApiError;
-};
-
 export type ToolDefinitionView = {
   name: string;
   description: string;
@@ -25,38 +21,8 @@ export type RuntimeInfo = {
   trustMode: boolean;
 };
 
-export type ListSessionsResponse = {
-  sessions: SessionMeta[];
-};
-
 export type CreateSessionRequest = {
   name?: string;
-};
-
-export type CreateSessionResponse = {
-  session: SessionMeta;
-};
-
-export type GetSessionResponse = {
-  session: SessionMeta | null;
-};
-
-export type GetMessagesResponse = {
-  messages: ChatMessage[];
-};
-
-export type RewindRequest = {
-  selectedIndex: number;
-};
-
-export type RewindResponse = {
-  messages: ChatMessage[];
-  input: string;
-};
-
-export type GetConfigResponse = {
-  config: YacaConfig;
-  runtime: RuntimeInfo;
 };
 
 export type UpdateConfigRequest = {
@@ -66,8 +32,6 @@ export type UpdateConfigRequest = {
   allowTools?: string[];
   allowCommands?: string[];
 };
-
-export type UpdateConfigResponse = GetConfigResponse;
 
 export type ListToolsResponse = {
   tools: ToolDefinitionView[];

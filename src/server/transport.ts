@@ -1,5 +1,5 @@
 import type { WebSocket } from 'ws';
-import type { ServerWsMessage } from '../api/types.js';
+import type { ServerWsMessage } from './api-types.js';
 
 export class WebSocketHub {
   private readonly clients = new Set<WebSocket>();

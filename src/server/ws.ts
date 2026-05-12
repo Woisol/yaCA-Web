@@ -1,7 +1,7 @@
 import type http from 'node:http';
 import { WebSocketServer, type WebSocket } from 'ws';
 import { renderSessionMessages } from '@woisol-g/yaca/web-runtime.js';
-import type { ClientWsMessage } from '../api/types.js';
+import type { ClientWsMessage } from './api-types.js';
 import { toApiError } from './response.js';
 import type { WebSocketHub } from './transport.js';
 import type { PendingToolApproval, YacaWebRuntime } from './types.js';

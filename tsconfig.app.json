@@ -11,13 +11,7 @@
     "moduleResolution": "bundler",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@woisol-g/yaca/web-runtime.js": ["../../apps/web-runtime.ts"],
-      "@yaca/agent-core": ["../../packages/agent-core/src/index.ts"],
-      "@yaca/agent-core/*.js": ["../../packages/agent-core/src/*.ts"],
-      "@yaca/agent-core/*": ["../../packages/agent-core/src/*"],
-      "@yaca/ui/*": ["../../packages/shared/ui/src/*"],
-      "@yaca/types": ["../../packages/shared/types/index.ts"],
-      "@yaca/types/*": ["../../packages/shared/types/*"]
+      "@woisol-g/yaca/web-runtime.js": ["../../dist/web-runtime.d.ts"]
     },
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,

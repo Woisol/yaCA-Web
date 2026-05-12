@@ -1,5 +1,5 @@
 import type http from 'node:http';
-import type { ApiError } from '../api/types.js';
+import type { ApiError } from './api-types.js';
 
 export async function readJson<T>(request: http.IncomingMessage): Promise<T> {
   const raw = await readRequestBody(request);

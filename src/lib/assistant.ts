@@ -1,5 +1,5 @@
 import type { AppendMessage, ThreadMessage } from '@assistant-ui/react';
-import type { ChatMessage } from '@yaca/ui/chat/types.js';
+import type { ChatMessage } from '../api/types.js';
 
 export function toThreadMessages(messages: ChatMessage[], cwd = getDefaultCwd()): ThreadMessage[] {
   return messages.map((message, index) => {

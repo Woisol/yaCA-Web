@@ -1,4 +1,4 @@
-import type { MessagePart } from '@yaca/types';
+import type { MessagePart } from '../api/types.js';
 
 export type DroppedMessage = {
   text: string;

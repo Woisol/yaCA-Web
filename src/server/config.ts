@@ -1,4 +1,4 @@
-import type { ListToolsResponse, RuntimeInfo, ToolDefinitionView, UpdateConfigRequest } from '../api/types.js';
+import type { ListToolsResponse, RuntimeInfo, ToolDefinitionView, UpdateConfigRequest } from './api-types.js';
 import type { YacaWebRuntime } from './types.js';
 
 export async function updateRuntimeConfig(runtime: YacaWebRuntime, update: UpdateConfigRequest): Promise<void> {
