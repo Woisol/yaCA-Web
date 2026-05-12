@@ -34,7 +34,7 @@
 }
 
 .message-bubble {
-  max-width: min(760px, 88%);
+  max-width: 88%;
   height: fit-content;
   padding: 11px 13px;
   border-radius: 8px;
@@ -190,8 +190,8 @@
   border-bottom: 0;
 }
 .html-bubble {
-  width: min(920px, 92%);
-  max-width: min(920px, 92%);
+  width: 92%;
+  max-width: 92%;
   padding: 0;
   overflow: hidden;
   white-space: normal;
