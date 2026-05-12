@@ -1,12 +1,8 @@
-import { startTransition, useEffect, useState, type MouseEvent } from 'react';
 import { ChevronsLeft, Moon, Plus, Sun } from 'lucide-react';
 import type { SessionMeta } from '../../api/types.js';
+import { useTheme } from '../../hooks/useTheme.js';
 import { formatSessionDate } from '../../lib/dates.js';
 import './SessionSidebar.css';
-
-type Theme = 'dark' | 'light';
-
-const THEME_STORAGE_KEY = 'yaca-web-theme';
 
 export function SessionSidebar({
   open,
@@ -23,47 +19,7 @@ export function SessionSidebar({
   onCreate(): void;
   onSelect(id: string): void;
 }) {
-  // 是的 useState 初始值是可以用函数的
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-    if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-  }, [theme]);
-
-  const toggleTheme = (event: MouseEvent<HTMLButtonElement>) => {
-    const nextTheme: Theme = theme === 'dark' ? 'light' : 'dark';
-    const root = document.documentElement;
-    root.style.setProperty('--theme-circle-x', `${event.clientX}px`);
-    root.style.setProperty('--theme-circle-y', `${event.clientY}px`);
-    root.style.viewTransitionName = 'theme';
-
-    const withViewTransition = document as Document & {
-      startViewTransition?: (update: () => void) => { finished: Promise<void> };
-    };
-
-    const cleanup = () => {
-      root.style.viewTransitionName = '';
-      root.style.removeProperty('--theme-circle-x');
-      root.style.removeProperty('--theme-circle-y');
-    };
-
-    if (!withViewTransition.startViewTransition) {
-      startTransition(() => setTheme(nextTheme));
-      cleanup();
-      return;
-    }
-
-    const transition = withViewTransition.startViewTransition(() => {
-      startTransition(() => setTheme(nextTheme));
-    });
-    transition.finished.finally(cleanup);
-  };
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <>

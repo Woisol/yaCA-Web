@@ -4,12 +4,14 @@ import { RotateCcw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { ChatMessage } from '../../api/types.js';
+import { type Theme, useTheme } from '../../hooks/useTheme.js';
 import { createSandboxedHtmlDocument, getMessageRenderMode } from '../../lib/message-rendering.js';
 import './ThreadView.css';
 
 type HighlightedCodeProps = {
   code: string;
   language: string;
+  theme: Theme;
 };
 
 const LazySyntaxHighlighter = lazy(async () => {
@@ -19,7 +21,7 @@ const LazySyntaxHighlighter = lazy(async () => {
   ]);
 
   return {
-    default: function HighlightedCode({ code, language }: HighlightedCodeProps) {
+    default: function HighlightedCode({ code, language, theme }: HighlightedCodeProps) {
       return (
         <SyntaxHighlighter
           PreTag="div"
@@ -27,7 +29,7 @@ const LazySyntaxHighlighter = lazy(async () => {
           codeTagProps={{ className: 'message-md-code-tag' }}
           customStyle={{ margin: 0 }}
           language={language}
-          style={window.matchMedia('(prefers-color-scheme: dark)').matches ? oneDark : oneLight}
+          style={theme === 'dark' ? oneDark : oneLight}
         >
           {code}
         </SyntaxHighlighter>
@@ -117,6 +119,7 @@ function MarkdownCode({ className, children, ...props }: ComponentPropsWithoutRe
 }
 
 function MarkdownPre({ children, ...props }: ComponentPropsWithoutRef<'pre'>) {
+  const { theme } = useTheme();
   const code = getCodeElement(children);
   const className = code?.props.className;
   const language = getCodeLanguage(className);
@@ -124,7 +127,7 @@ function MarkdownPre({ children, ...props }: ComponentPropsWithoutRef<'pre'>) {
   if (code && language) {
     return (
       <Suspense fallback={<CodeFallback code={source} />}>
-        <LazySyntaxHighlighter code={source} language={language} />
+        <LazySyntaxHighlighter code={source} language={language} theme={theme} />
       </Suspense>
     );
   }
