@@ -117,7 +117,7 @@ export function useYacaWeb() {
         const created = await rest.createSession({ name: trimmed.slice(0, 80) });
         nextSessionId = created.session.id;
         setSessionId(nextSessionId);
-        setSessions((current) => [created.session, ...current]);
+        // setSessions((current) => [created.session, ...current]);
         writeSessionRoute(nextSessionId);
       } catch (cause) {
         setBusy(false);
@@ -163,7 +163,7 @@ export function useYacaWeb() {
 
   const createSession = useCallback(async () => {
     const created = await rest.createSession({ name: 'New session' });
-    setSessions((current) => [created.session, ...current]);
+    // setSessions((current) => [created.session, ...current]);
     setSessionId(created.session.id);
     setMessages([]);
     writeSessionRoute(created.session.id);
