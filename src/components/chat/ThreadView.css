@@ -127,7 +127,7 @@
 }
 
 .message-md-highlight {
-  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  border: 1px solid var(--border);
 }
 
 .message-md-code-tag {
@@ -156,6 +156,39 @@
   text-underline-offset: 2px;
 }
 
+.markdown-bubble table {
+  width: 100%;
+  margin: 10px 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.markdown-bubble th,
+.markdown-bubble td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+}
+
+.markdown-bubble th {
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.markdown-bubble tbody tr:nth-child(even) td {
+  background: var(--panel-strong);
+}
+
+.markdown-bubble tbody tr:last-child td {
+  border-bottom: 0;
+}
 .html-bubble {
   width: min(920px, 92%);
   max-width: min(920px, 92%);

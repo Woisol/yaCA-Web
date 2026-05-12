@@ -7,6 +7,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import type { ChatMessage } from '../../api/types.js';
 import { createSandboxedHtmlDocument, getMessageRenderMode } from '../../lib/message-rendering.js';
 import './ThreadView.css';
+import remarkGfm from 'remark-gfm';
 
 type ThreadViewProps = {
   onRewind(index: number): void;
@@ -59,6 +60,7 @@ function RenderedMessageBubble({ className, text }: { className: string; text: s
   return (
     <div className={`${className} markdown-bubble`}>
       <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
         components={{
           a: MarkdownLink,
           code: MarkdownCode,
