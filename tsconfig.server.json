@@ -8,10 +8,11 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "outDir": "dist",
+    "outDir": ".server-build",
     "rootDir": "../..",
     "types": ["node"],
     "paths": {
+      "@woisol-g/yaca/web-runtime.js": ["../../apps/web-runtime.ts"],
       "@yaca/agent-core": ["../../packages/agent-core/src/index.ts"],
       "@yaca/agent-core/*.js": ["../../packages/agent-core/src/*.ts"],
       "@yaca/agent-core/*": ["../../packages/agent-core/src/*"],
@@ -28,7 +29,6 @@
   "include": [
     "src/server.ts",
     "src/server/**/*.ts",
-    "src/api/types.ts",
-    "../../packages/shared/ui/src/**/*.ts"
+    "src/api/types.ts"
   ]
 }

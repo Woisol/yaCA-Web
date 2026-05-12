@@ -1,31 +1,35 @@
 {
   "name": "@woisol-g/yaca-web",
-  "version": "0.0.0",
+  "version": "1.3.3",
+  "description": "Web UI package for yaCA.",
   "type": "module",
-  "main": "./dist/apps/yaca-web/src/server.js",
+  "main": "./server.js",
   "exports": {
-    ".": "./dist/apps/yaca-web/src/server.js",
-    "./server.js": "./dist/apps/yaca-web/src/server.js",
-    "./server/prompt.js": "./dist/apps/yaca-web/src/server/prompt.js"
+    ".": "./server.js",
+    "./server.js": "./server.js",
+    "./server/prompt.js": "./server/prompt.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "server.js",
+    "server.d.ts",
+    "server"
   ],
   "scripts": {
     "dev": "vp dev",
-    "build": "tsc -b && vp build && tsc -p tsconfig.server.json",
+    "build": "tsc -b && vp build && tsc -p tsconfig.server.json && node scripts/prepare-package.mjs",
     "lint": "vp lint .",
     "preview": "vp preview"
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.0",
-    "@yaca/agent-core": "workspace:*",
-    "@yaca/types": "workspace:*",
-    "@yaca/ui": "workspace:*",
     "lucide-react": "^1.14.0",
     "react": "=19.2.5",
     "react-dom": "=19.2.5",
     "ws": "^8.20.0"
+  },
+  "peerDependencies": {
+    "@woisol-g/yaca": "1.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

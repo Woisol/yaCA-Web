@@ -1,5 +1,4 @@
-import type { AgentLoop, CliState, SessionStore, ToolPermissionController } from '@yaca/agent-core';
-import type { ToolCall, ToolDefinition } from '@yaca/types';
+import type { AgentLoop, CliState, SessionStore, ToolCall, ToolDefinition, ToolPermissionController } from '@woisol-g/yaca/web-runtime.js';
 
 export type ToolRegistryLike = {
   definitions?(): ToolDefinition[];

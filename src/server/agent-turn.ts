@@ -1,24 +1,22 @@
 import {
-  applySxmlPatch,
-  collectAssistantText,
-  createStoredAgentEventMessage,
-  parseUserInput,
-  storedChatMessagesToModelMessages,
-  type YacaSxmlEvent
-} from '@yaca/agent-core';
-import type { AgentEvent } from '@yaca/types';
-import type { ChatMessage as StoredChatMessage } from '@yaca/types';
-import {
   appendAssistantDelta,
   appendChatLine,
   applyAssistantEventPatch,
   applyToolCall,
   applyToolResult,
+  applySxmlPatch,
+  collectAssistantText,
+  createStoredAgentEventMessage,
   formatStoredMessageContent,
+  parseUserInput,
   reduceMessageFile,
   renderSessionMessages,
-  type ChatMessage
-} from '@yaca/ui';
+  storedChatMessagesToModelMessages,
+  type AgentEvent,
+  type ChatMessage,
+  type StoredChatMessage,
+  type YacaSxmlEvent
+} from '@woisol-g/yaca/web-runtime.js';
 import type { YacaWebRuntime } from './types.js';
 
 export async function runWebAgentTurn(

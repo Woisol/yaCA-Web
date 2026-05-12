@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -6,10 +7,10 @@ import { notFound } from './response.js';
 
 export async function serveAsset(response: http.ServerResponse, pathname: string): Promise<void> {
   const packageRoot = findPackageRoot(path.dirname(fileURLToPath(import.meta.url)));
-  const root = path.join(packageRoot, 'dist');
+  const root = path.resolve(packageRoot, 'dist');
   const relative = pathname === '/' ? 'index.html' : pathname.slice(1);
   const assetPath = path.resolve(root, relative);
-  if (!assetPath.startsWith(root)) {
+  if (!isInsideDirectory(root, assetPath)) {
     return notFound(response);
   }
   try {
@@ -26,7 +27,7 @@ export async function serveAsset(response: http.ServerResponse, pathname: string
 function findPackageRoot(startDirectory: string): string {
   let current = path.resolve(startDirectory);
   for (let depth = 0; depth < 8; depth += 1) {
-    if (path.basename(current) === 'yaca-web') {
+    if (isYacaWebPackageRoot(current)) {
       return current;
     }
     const parent = path.dirname(current);
@@ -34,6 +35,24 @@ function findPackageRoot(startDirectory: string): string {
     current = parent;
   }
   return path.resolve(startDirectory, '../../..');
+}
+
+function isYacaWebPackageRoot(directory: string): boolean {
+  const packageJsonPath = path.join(directory, 'package.json');
+  if (!existsSync(packageJsonPath)) {
+    return false;
+  }
+  try {
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as { name?: string };
+    return packageJson.name === '@woisol-g/yaca-web';
+  } catch {
+    return path.basename(directory) === 'yaca-web';
+  }
+}
+
+function isInsideDirectory(root: string, candidate: string): boolean {
+  const relative = path.relative(root, candidate);
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
 }
 
 function contentType(filePath: string): string {

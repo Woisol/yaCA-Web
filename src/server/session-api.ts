@@ -1,5 +1,5 @@
 import type http from 'node:http';
-import { applyRewindSelection, renderSessionMessages } from '@yaca/ui';
+import { applyRewindSelection, renderSessionMessages } from '@woisol-g/yaca/web-runtime.js';
 import { json, notFound, readJson } from './response.js';
 import type { YacaWebRuntime } from './types.js';
 

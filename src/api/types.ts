@@ -1,11 +1,60 @@
-import type { YacaConfig } from '@yaca/agent-core/storage/config-store.js';
-import type { SessionMeta } from '@yaca/agent-core/storage/session-store.js';
-import type { AgentEvent, ToolCall } from '@yaca/types';
-import type { ChatMessage } from '@yaca/ui/chat/types.js';
-import type { MessagePart } from '@yaca/types';
+// 又把类型内嵌回来了……行吧
+export type MessagePart =
+  | { type: 'text'; text: string }
+  | { type: 'image_url'; image_url: { url: string }; meta?: { path?: string } };
 
-export type { AgentEvent, ChatMessage, ToolCall };
-export type { SessionMeta, YacaConfig };
+export type ChatMessage = {
+  kind: 'user' | 'assistant' | 'tool' | 'status' | 'error';
+  text?: string;
+  callId?: string;
+  toolName?: string;
+  args?: Record<string, unknown>;
+  status?: 'running' | 'success' | 'error';
+  result?: string;
+  expanded?: boolean;
+  rawResponse?: string;
+  orphan?: boolean;
+};
+
+export type ToolCall = {
+  call_id?: string;
+  name: string;
+  args: Record<string, unknown>;
+};
+
+export type AgentEvent =
+  | { type: 'assistant_delta'; text: string }
+  | { type: 'assistant_replace'; text: string }
+  | { type: 'assistant_text'; text: string }
+  | { type: 'assistant_event'; patch: unknown }
+  | { type: 'tool_call'; call: ToolCall; rawResponse: string }
+  | { type: 'tool_result'; call_id?: string; result: { ok: boolean; content: string }; rawResponse: string }
+  | { type: 'error'; message: string };
+
+export type SessionMeta = {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  message_count: number;
+};
+
+export type YacaConfig = {
+  model: string;
+  base_url?: string;
+  api_key?: string;
+  max_turns: number;
+  max_tool_retry: number;
+  tool_call: {
+    tool_call_compatible: boolean;
+    postpone_tool_calls: number;
+    try_fallback: boolean;
+    allow: {
+      tools: string[];
+      commands: string[];
+    };
+  };
+};
 
 export type ApiError = {
   code: string;
