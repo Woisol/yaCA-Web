@@ -11,6 +11,7 @@
     "moduleResolution": "bundler",
     "ignoreDeprecations": "6.0",
     "paths": {
+      "@woisol-g/llm-html": ["../../packages/llm-html/src/index.ts"],
       "@woisol-g/yaca/web-runtime.js": ["../../dist/web-runtime.d.ts"]
     },
     "allowImportingTsExtensions": true,

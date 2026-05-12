@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@assistant-ui/react": "^0.14.0",
+    "@woisol-g/llm-html": "workspace:*",
     "lucide-react": "^1.14.0",
     "react": "=19.2.5",
     "react-dom": "=19.2.5",

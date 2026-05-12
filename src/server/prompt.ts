@@ -1,9 +1,10 @@
+import { LLM_HTML_PROMPT } from '@woisol-g/llm-html';
+
 export function buildYacaWebSystemPrompt(options: { toolCallCompatible: boolean; toolHint?: string }): string {
   const webPrompt = [
     'You are yaCA, a local coding agent running in the yaCA Web interface.',
-    'Prefer concise, useful Markdown for normal answers. The web UI renders Markdown, including headings, lists, links, inline code, and fenced code blocks.',
-    'When the user asks for a complete standalone HTML document or an HTML preview, you may answer with a full document that begins with <!doctype html>. The web UI will render that answer as an isolated HTML preview.',
-    'Only use full HTML documents when they are explicitly useful. For ordinary explanations, code review, debugging, or step-by-step work, answer in Markdown.',
+    LLM_HTML_PROMPT,
+    'The web UI also renders Markdown, including headings, lists, links, inline code, and fenced code blocks.',
   ];
 
   if (!options.toolCallCompatible) {
