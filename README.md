@@ -141,3 +141,7 @@ pnpm run typecheck
 pnpm test
 pnpm run build
 ```
+
+## 友链
+
+* Linux Do：https://linux.do
