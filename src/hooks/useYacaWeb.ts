@@ -27,6 +27,7 @@ export function useYacaWeb() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [pendingToolConfirm, setPendingToolConfirm] = useState<PendingToolConfirm | null>(null);
+  // 确实，在自定 hook 中就没办法用外部 js 变量了必须用 ref
   const wsRef = useRef<WsClient | null>(null);
   const sessionsRef = useRef<SessionMeta[]>([]);
 
